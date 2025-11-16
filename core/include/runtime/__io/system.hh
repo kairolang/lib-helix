@@ -33,6 +33,11 @@
 #include <include/types/question/question_impl.hh>
 #include <include/types/string/string.hh>
 
+#ifdef __linux__
+#   include <sys/wait.h>
+#   include <unistd.h>
+#endif
+
 // "⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"
 
 H_NAMESPACE_BEGIN
