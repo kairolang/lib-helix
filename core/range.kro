@@ -129,7 +129,7 @@
 /// maintain consistency with the project's coding standards.
 ///
 /// For questions or discussions about this module, join the community forums at:
-/// https://kairo-lang.com/community
+/// https://helix-lang.com/community
 #[trivially_import(true)] // prevents wrapping IR in a `unwind` module, keeping the handler globally accessible
 
 module std {
