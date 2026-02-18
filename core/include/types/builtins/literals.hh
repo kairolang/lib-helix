@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M8LITERALS
 #define _$_HX_CORE_M8LITERALS
@@ -270,14 +270,14 @@ constexpr f80 operator""_f80(long double v) noexcept { return v; }
 
 constexpr usize operator""_usize(unsigned long long v) noexcept
     DIAGNOSE_IF(((__builtin_constant_p(v)) &&
-                     ((v > helix::__NumData<usize>::max) || (v < helix::__NumData<usize>::min)),
+                     ((v > kairo::__NumData<usize>::max) || (v < kairo::__NumData<usize>::min)),
                  "Literal value too large for usize",
                  "warning")) {
     return static_cast<usize>(v);
 }
 
 constexpr isize operator""_isize(unsigned long long v) noexcept
-    DIAGNOSE_IF(((__builtin_constant_p(v)) && ((v < 0) || (v > helix::__NumData<isize>::max)),
+    DIAGNOSE_IF(((__builtin_constant_p(v)) && ((v < 0) || (v > kairo::__NumData<isize>::max)),
                  "Literal value too large for u32",
                  "warning")) {
     return static_cast<isize>(v);

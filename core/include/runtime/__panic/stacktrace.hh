@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M10STACKTRACE
 #define _$_HX_CORE_M10STACKTRACE
@@ -43,15 +43,15 @@ H_STD_NAMESPACE_BEGIN
 namespace Stacktrace {
 
 #if defined(_MSC_VER)
-#define __HELIX_FUNCNAME__ __FUNCSIG__
+#define __KAIRO_FUNCNAME__ __FUNCSIG__
 #elif defined(__GNUC__) || defined(__clang__)
-#define __HELIX_FUNCNAME__ __PRETTY_FUNCTION__
+#define __KAIRO_FUNCNAME__ __PRETTY_FUNCTION__
 #else
-#define __HELIX_FUNCNAME__ __func__
+#define __KAIRO_FUNCNAME__ __func__
 #endif
 
 enum class FrameKind : uint8_t {
-    Helix  = 0,
+    Kairo  = 0,
     Hybrid = 1,
     Native = 2,
 };
@@ -110,9 +110,9 @@ struct alignas(16) FrameSummary {  // exactly 32 bytes on 64-bit and 16 bytes on
 #endif
 
 #if defined(__GNUC__) || defined(__clang__) || defined(_MSC_VER)
-inline thread_local FrameSummary *g_tls_helix_head = nullptr;
+inline thread_local FrameSummary *g_tls_kairo_head = nullptr;
 #else
-inline const FrameSummary *g_tls_helix_head = nullptr;
+inline const FrameSummary *g_tls_kairo_head = nullptr;
 #endif
 
 struct RegisterFrame {
@@ -120,12 +120,12 @@ struct RegisterFrame {
 
     explicit RegisterFrame(const Location *loc, const FrameKind kind = FrameKind::Hybrid) noexcept {
         frame.loc        = const_cast<Location *>(loc);
-        frame.prev       = g_tls_helix_head;
+        frame.prev       = g_tls_kairo_head;
         frame.kind       = kind;
-        g_tls_helix_head = &frame;
+        g_tls_kairo_head = &frame;
     }
 
-    ~RegisterFrame() noexcept { g_tls_helix_head = frame.prev; }
+    ~RegisterFrame() noexcept { g_tls_kairo_head = frame.prev; }
 
     RegisterFrame(const RegisterFrame &)            = delete;
     RegisterFrame &operator=(const RegisterFrame &) = delete;
@@ -134,30 +134,30 @@ struct RegisterFrame {
 };
 
 #if defined(_MSC_VER) && _MSC_VER < 1940
-#  error "Helix requires MSVC 19.14 (VS 2017 15.7) or newer for constexpr tracing support."
+#  error "Kairo requires MSVC 19.14 (VS 2017 15.7) or newer for constexpr tracing support."
 #endif
 
 #define __REGISTER_TRACE_BLOCK__(file_cstr, line_num, var_n)                   \
     if !consteval {                                                            \
-      static ::helix::std::Stacktrace::Location var_n{                         \
-          (file_cstr), __HELIX_FUNCNAME__, static_cast<uint32_t>(line_num)};   \
-      ::helix::std::Stacktrace::RegisterFrame _hx_scope(                       \
-          &var_n, std::Stacktrace::FrameKind::Helix);                          \
+      static ::kairo::std::Stacktrace::Location var_n{                         \
+          (file_cstr), __KAIRO_FUNCNAME__, static_cast<uint32_t>(line_num)};   \
+      ::kairo::std::Stacktrace::RegisterFrame _hx_scope(                       \
+          &var_n, std::Stacktrace::FrameKind::Kairo);                          \
     }
 
-#define __REGISTER_HELIX_TRACE_BLOCK__(file_cstr, line_num, func_cstr, var_n)  \
+#define __REGISTER_KAIRO_TRACE_BLOCK__(file_cstr, line_num, func_cstr, var_n)  \
     if !consteval {                                                            \
-      static ::helix::std::Stacktrace::Location var_n{                         \
+      static ::kairo::std::Stacktrace::Location var_n{                         \
           (file_cstr), (func_cstr), static_cast<uint32_t>(line_num)};          \
-      ::helix::std::Stacktrace::RegisterFrame _hx_scope(                       \
-          &var_n, std::Stacktrace::FrameKind::Helix);                          \
+      ::kairo::std::Stacktrace::RegisterFrame _hx_scope(                       \
+          &var_n, std::Stacktrace::FrameKind::Kairo);                          \
     }
 
 #define __REGISTER_HYBRID_TRACE_BLOCK__(var_n)                                 \
     if !consteval {                                                            \
-      static ::helix::std::Stacktrace::Location var_n{                         \
-          __FILE__, __HELIX_FUNCNAME__, (static_cast<uint32_t>(__LINE__))};    \
-      ::helix::std::Stacktrace::RegisterFrame _hx_cpp_scope(&var_n);           \
+      static ::kairo::std::Stacktrace::Location var_n{                         \
+          __FILE__, __KAIRO_FUNCNAME__, (static_cast<uint32_t>(__LINE__))};    \
+      ::kairo::std::Stacktrace::RegisterFrame _hx_cpp_scope(&var_n);           \
     }
 
 #define MAX_STACK_FRAME_DEPTH 1024
@@ -182,9 +182,9 @@ inline FrameSummary *capture(int max_depth) {
     const int limit = clamp_limit(max_depth);
     int       idx   = 0;
 
-    // Walk the thread-local Helix frame chain and snapshot into s_nodes.
+    // Walk the thread-local Kairo frame chain and snapshot into s_nodes.
     // Preserve kind/loc and rebuild prev pointers to point into the snapshot.
-    for (const FrameSummary *cur = g_tls_helix_head; cur != nullptr && idx < limit;
+    for (const FrameSummary *cur = g_tls_kairo_head; cur != nullptr && idx < limit;
          cur                     = cur->prev) {
         s_nodes[idx].loc  = cur->loc;
         s_nodes[idx].kind = cur->kind;
@@ -238,7 +238,7 @@ inline FrameSummary *capture(int max_depth) {
     const int limit = clamp_limit(max_depth);
     int       idx   = 0;
 
-    for (const FrameSummary *cur = g_tls_helix_head; (cur != nullptr) && idx < limit;
+    for (const FrameSummary *cur = g_tls_kairo_head; (cur != nullptr) && idx < limit;
          cur                     = cur->prev) {
         s_nodes[idx].loc  = cur->loc;
         s_nodes[idx].kind = cur->kind;
@@ -370,13 +370,13 @@ inline void backtrace(const FrameSummary *cur = capture()) {
             if (cur->loc->file && cur->loc->func && cur->loc->line != 0) {
                 std::print(std::stringf(
                     L"\x1b[31m{}\x1b[0m (\x1b[33m{}:{})",
-                    std::ABI::strip_helix_prefix(std::ABI::demangle_partial(cur->loc->func)),
+                    std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(cur->loc->func)),
                     cur->loc->file,
                     cur->loc->line));
             } else if (cur->loc->file && cur->loc->func) {
                 std::print(std::stringf(
                     L"\x1b[31m{}\x1b[0m (\x1b[33m{}\x1b[0m)",
-                    std::ABI::strip_helix_prefix(std::ABI::demangle_partial(cur->loc->func)),
+                    std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(cur->loc->func)),
                     cur->loc->file));
             } else if (cur->loc->func) {
                 std::print(std::stringf(L"\x1b[31m{}\x1b[0m", cur->loc->func));

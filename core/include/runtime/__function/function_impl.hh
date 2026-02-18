@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M13FUNCTION_IMPL
 #define _$_HX_CORE_M13FUNCTION_IMPL
@@ -34,9 +34,9 @@ class $function;
 
 /// \class $function
 ///
-/// A core utility within the Helix runtime, `$function` provides support for function-like
+/// A core utility within the Kairo runtime, `$function` provides support for function-like
 /// objects, enabling flexible and dynamic handling of callable entities. This feature is central to
-/// implementing higher-order functions, callbacks, and functional programming paradigms in Helix.
+/// implementing higher-order functions, callbacks, and functional programming paradigms in Kairo.
 ///
 /// ### Overview
 /// `$function` serves as a type-erased, dynamically allocated wrapper for various callable
@@ -44,19 +44,19 @@ class $function;
 /// - Lambdas.
 /// - Function pointers.
 /// - Functor objects (classes with `operator()`).
-/// - Helix-specific callable constructs, such as `fn` types.
+/// - Kairo-specific callable constructs, such as `fn` types.
 ///
-/// This wrapper ensures consistent semantics and integration with Helix's runtime, allowing
+/// This wrapper ensures consistent semantics and integration with Kairo's runtime, allowing
 /// developers to store and invoke any callable with the same type signature.
 ///
 /// ### Key Features
 /// - **Dynamic Callable Wrapping**:
 ///   - Can wrap any callable conforming to the specified signature (`Rt(Tp...)`).
 ///   - Provides type erasure to handle various callable types uniformly.
-/// - **Integration with Helix's `fn` Syntax**:
-///   - Supports Helix-specific syntax for defining function types (`fn (...) -> ...`).
+/// - **Integration with Kairo's `fn` Syntax**:
+///   - Supports Kairo-specific syntax for defining function types (`fn (...) -> ...`).
 ///   - Allows assigning function pointers, lambdas, or callable objects to `fn` variables:
-///     ```helix
+///     ```kairo
 ///     let x: fn (i32) -> void = some_function;
 ///     let y: fn () -> void = fn () -> void { print("Hello"); };
 ///     class Functor {
@@ -86,36 +86,36 @@ class $function;
 /// #### Construction
 /// `$function` can be constructed from:
 /// - A callable object (e.g., lambda or functor):
-///   ```helix
+///   ```kairo
 ///   let f: fn (i32) -> void = [](i32 x) { print(x); };
 ///   ```
 /// - A function pointer:
-///   ```helix
+///   ```kairo
 ///   let f: fn () -> void = &some_function;
 ///   ```
 ///
 /// #### Invocation
 /// Once assigned, `$function` objects can be called like regular functions:
-/// ```helix
+/// ```kairo
 /// let f: fn (i32) -> void = [](i32 x) { print(x); };
 /// f(42);  // Output: 42
 /// ```
 ///
 /// #### Resetting
 /// The `reset()` method clears the current callable and releases any associated resources:
-/// ```helix
+/// ```kairo
 /// let f: fn () -> void = &some_function;
 /// f.reset();
 /// assert(f == null);
 /// ```
 ///
 /// ### Notes
-/// - `$function` integrates tightly with Helix's runtime and is part of its standard library.
+/// - `$function` integrates tightly with Kairo's runtime and is part of its standard library.
 /// - The implementation currently relies on `libc++` for alignment and utility functions.
 /// - Future versions may refactor `$function` to remove external dependencies.
 ///
 /// ### Example Usage
-/// ```helix
+/// ```kairo
 /// fn hello_world() -> void {
 ///     print("Hello, World!");
 /// }
@@ -127,13 +127,13 @@ class $function;
 /// g(10);  // Output: 10
 /// ```
 ///
-/// ### Integration with Helix
-/// `$function` supports Helix's `fn` type, enabling seamless integration with Helix's language
+/// ### Integration with Kairo
+/// `$function` supports Kairo's `fn` type, enabling seamless integration with Kairo's language
 /// constructs and runtime. This makes it a core building block for implementing higher-order
-/// functions and functional-style programming in Helix.
+/// functions and functional-style programming in Kairo.
 ///
 /// ### Related Concepts
-/// - `fn` Types: The Helix-specific function type syntax.
+/// - `fn` Types: The Kairo-specific function type syntax.
 /// - Callable Objects: Classes with `operator()` can be used as functors with `$function`.
 /// - Lambdas: Inline callable constructs supported by `$function`.
 template <typename Rt, typename... Tp>
@@ -170,7 +170,7 @@ class $function<Rt(Tp...)> {
     ///
     /// ### Example
     /// The `$function` class uses `$callable` to store and manage callable entities:
-    /// ```helix
+    /// ```kairo
     /// $function<void(int)> f = [](int x) { print(x); };
     /// f(42);  // Internally calls `$callable::invoke`.
     /// ```

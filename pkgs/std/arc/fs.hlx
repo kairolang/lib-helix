@@ -1,5 +1,0 @@
-// the fs module provides filesystem utilities for helix programs. (along with path manipulation, file reading, etc.)
-
-ffi "c++" import "filesystem";
-
-/// a couple of classes:

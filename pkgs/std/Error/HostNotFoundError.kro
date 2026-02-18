@@ -1,0 +1,45 @@
+///--- The Kairo Project ------------------------------------------------------------------------///
+///                                                                                              ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
+///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
+///   were made.                                                                                 ///
+///                                                                                              ///
+///   For more information on the license terms and requirements, please visit:                  ///
+///     https://creativecommons.org/licenses/by/4.0/                                             ///
+///                                                                                              ///
+///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
+///                                                                                              ///
+///-------------------------------------------------------------------------------- lib-helix ---///
+
+import NetworkError;
+
+/// Error when a hostname cannot be resolved
+default class HostNotFoundError derives NetworkError {
+    /// Constructor with hostname
+    fn HostNotFoundError(self, hostname: string) {
+        NetworkError.NetworkError(f"Host not found: \'{hostname}\'");
+    }
+    
+    /// Constructor with hostname and error code
+    fn HostNotFoundError(self, hostname: string, error_code: i32) {
+        NetworkError.NetworkError(f"Host not found: \'{hostname}\'", error_code);
+    }
+    
+    /// Constructor with custom message
+    fn HostNotFoundError(self, msg: string) {
+        NetworkError.NetworkError(msg);
+    }
+    
+    /// Constructor with custom message and error code
+    fn HostNotFoundError(self, msg: string, error_code: i32) {
+        NetworkError.NetworkError(msg, error_code);
+    }
+    
+    /// Default constructor
+    default fn HostNotFoundError(self);
+
+    /// Virtual destructor
+    override default fn op delete (self);
+}

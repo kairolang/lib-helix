@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,12 +9,12 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 
-// MIGRATE: TO HELIX CORE
+// MIGRATE: TO KAIRO CORE
 // FIXME: slice is very broken if mem forwarded or taken from const char*
 
 #ifndef _$_HX_CORE_M7STRINGF
@@ -34,7 +34,7 @@ inline string stringf(string fmt) {
     return fmt;
 }
 
-/// \include belongs to the helix standard library.
+/// \include belongs to the kairo standard library.
 /// \brief format a string with arguments
 ///
 /// a fmt string looks like this: "hello {} world {}" or "hello \\{ {} world \\}" (escaped braces - ony the {} gets replaced, while the \\{ changes to { and the \\} changes to })

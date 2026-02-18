@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M6BITSET
 #define _$_HX_CORE_M6BITSET
@@ -30,7 +30,7 @@ H_NAMESPACE_BEGIN
 // -----------------------------------------------------------------------------
 // Helper: Character-to-Integer Conversion
 // -----------------------------------------------------------------------------
-HELIX_FORCE_INLINE constexpr int chr_to_i32(char c, int base) noexcept {
+KAIRO_FORCE_INLINE constexpr int chr_to_i32(char c, int base) noexcept {
     if (c >= '0' && c <= '9') {
         int d = c - '0';
         return (d < base) ? d : -1;
@@ -66,13 +66,13 @@ struct __BitSet<T> {
     T value;
     using c_type = T;
 
-    HELIX_FORCE_INLINE constexpr __BitSet()
+    KAIRO_FORCE_INLINE constexpr __BitSet()
         : value(0) {}
-    HELIX_FORCE_INLINE constexpr __BitSet(T val)
+    KAIRO_FORCE_INLINE constexpr __BitSet(T val)
         : value(val) {}
 
     template <typename U, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-    HELIX_FORCE_INLINE constexpr __BitSet(const U val) noexcept
+    KAIRO_FORCE_INLINE constexpr __BitSet(const U val) noexcept
         : value(static_cast<T>(val)) {
 #if defined(__clang__) || defined(__GNUC__) || defined(__MINGW32__)
 #pragma GCC diagnostic push
@@ -94,15 +94,15 @@ struct __BitSet<T> {
     }
 
     // Total digits/bits (as defined in __NumData)
-    HELIX_FORCE_INLINE static constexpr unsigned bits() noexcept { return __NumData<T>::digits; }
+    KAIRO_FORCE_INLINE static constexpr unsigned bits() noexcept { return __NumData<T>::digits; }
 
     // Get a specific bit (0 = least-significant)
-    [[nodiscard]] HELIX_FORCE_INLINE constexpr bool get_bit(unsigned idx) const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE constexpr bool get_bit(unsigned idx) const noexcept {
         return (value >> idx) & 1;
     }
 
     // Set a specific bit.
-    HELIX_FORCE_INLINE constexpr void set_bit(unsigned idx, bool b) noexcept {
+    KAIRO_FORCE_INLINE constexpr void set_bit(unsigned idx, bool b) noexcept {
         if (b) {
             value |= (T(1) << idx);
         } else {
@@ -111,16 +111,16 @@ struct __BitSet<T> {
     }
 
     // Explicit conversion to underlying type.
-    HELIX_FORCE_INLINE constexpr operator T() const noexcept { return value; }
+    KAIRO_FORCE_INLINE constexpr operator T() const noexcept { return value; }
 
-    HELIX_FORCE_INLINE constexpr __BitSet &operator=(T val) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator=(T val) noexcept {
         value = val;
         return *this;
     }
 
     // ── Arithmetic Operators ──
     // Addition operator with compile-time diagnostic and runtime check in debug.
-    HELIX_FORCE_INLINE constexpr __BitSet operator+(const __BitSet &other) const noexcept
+    KAIRO_FORCE_INLINE constexpr __BitSet operator+(const __BitSet &other) const noexcept
     // DIAGNOSE_IF(((__builtin_constant_p(value) && __builtin_constant_p(other.value)) &&
     //                  (__NumData<T>::is_signed
     //                       ? ((other.value > 0 && value > __NumData<T>::max - other.value) ||
@@ -135,21 +135,21 @@ struct __BitSet<T> {
 
     int some_func(const int *oj);
 
-    HELIX_FORCE_INLINE constexpr __BitSet &operator+=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator+=(const __BitSet &other) noexcept {
         *this = *this + other;
         return *this;
     }
 
-    HELIX_FORCE_INLINE constexpr __BitSet operator-(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator-(const __BitSet &other) const noexcept {
         return __BitSet(value - other.value);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator-=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator-=(const __BitSet &other) noexcept {
         value -= other.value;
         return *this;
     }
 
     // Naive multiplication (bit-iterative)
-    HELIX_FORCE_INLINE constexpr __BitSet operator*(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator*(const __BitSet &other) const noexcept {
         __BitSet result(0);
         for (unsigned i = 0; i < bits(); i++) {
             if (other.get_bit(i)) {
@@ -158,13 +158,13 @@ struct __BitSet<T> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator*=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator*=(const __BitSet &other) noexcept {
         *this = *this * other;
         return *this;
     }
 
     // Naive division (returns quotient)
-    HELIX_FORCE_INLINE constexpr __BitSet operator/(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator/(const __BitSet &other) const noexcept {
         __BitSet quotient(0);
         __BitSet remainder(0);
         for (int i = bits() - 1; i >= 0; i--) {
@@ -177,47 +177,47 @@ struct __BitSet<T> {
         }
         return quotient;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator/=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator/=(const __BitSet &other) noexcept {
         *this = *this / other;
         return *this;
     }
 
     // Naive modulo.
-    HELIX_FORCE_INLINE constexpr __BitSet operator%(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator%(const __BitSet &other) const noexcept {
         __BitSet quotient = *this / other;
         return *this - (quotient * other);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator%=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator%=(const __BitSet &other) noexcept {
         *this = *this % other;
         return *this;
     }
 
     // ── Bitwise Operators ──
-    HELIX_FORCE_INLINE constexpr __BitSet operator&(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator&(const __BitSet &other) const noexcept {
         return __BitSet(value & other.value);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator|(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator|(const __BitSet &other) const noexcept {
         return __BitSet(value | other.value);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator^(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator^(const __BitSet &other) const noexcept {
         return __BitSet(value ^ other.value);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet  operator~() const noexcept { return __BitSet(~value); }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator&=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet  operator~() const noexcept { return __BitSet(~value); }
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator&=(const __BitSet &other) noexcept {
         value &= other.value;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator|=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator|=(const __BitSet &other) noexcept {
         value |= other.value;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator^=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator^=(const __BitSet &other) noexcept {
         value ^= other.value;
         return *this;
     }
 
     // ── Shift Operators (naive bit-loop) ──
-    HELIX_FORCE_INLINE constexpr __BitSet operator<<(unsigned shift) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator<<(unsigned shift) const noexcept {
         __BitSet result(0);
         for (unsigned i = 0; i < bits(); i++) {
             if (get_bit(i) && (i + shift < bits())) {
@@ -226,11 +226,11 @@ struct __BitSet<T> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator<<=(unsigned shift) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator<<=(unsigned shift) noexcept {
         *this = *this << shift;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator>>(unsigned shift) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator>>(unsigned shift) const noexcept {
         __BitSet result(0);
         for (unsigned i = shift; i < bits(); i++) {
             if (get_bit(i)) {
@@ -239,48 +239,48 @@ struct __BitSet<T> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator>>=(unsigned shift) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator>>=(unsigned shift) noexcept {
         *this = *this >> shift;
         return *this;
     }
 
     // ── Increment / Decrement ──
-    HELIX_FORCE_INLINE constexpr __BitSet &operator++() noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator++() noexcept {
         *this += __BitSet(1);
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator++(int) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator++(int) noexcept {
         __BitSet temp = *this;
         ++(*this);
         return temp;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator--() noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator--() noexcept {
         *this -= __BitSet(1);
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator--(int) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator--(int) noexcept {
         __BitSet temp = *this;
         --(*this);
         return temp;
     }
 
     // ── Comparison Operators ──
-    HELIX_FORCE_INLINE constexpr bool operator==(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator==(const __BitSet &other) const noexcept {
         return value == other.value;
     }
-    HELIX_FORCE_INLINE constexpr bool operator!=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator!=(const __BitSet &other) const noexcept {
         return value != other.value;
     }
-    HELIX_FORCE_INLINE constexpr bool operator<(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator<(const __BitSet &other) const noexcept {
         return value < other.value;
     }
-    HELIX_FORCE_INLINE constexpr bool operator<=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator<=(const __BitSet &other) const noexcept {
         return value <= other.value;
     }
-    HELIX_FORCE_INLINE constexpr bool operator>(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator>(const __BitSet &other) const noexcept {
         return value > other.value;
     }
-    HELIX_FORCE_INLINE constexpr bool operator>=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator>=(const __BitSet &other) const noexcept {
         return value >= other.value;
     }
 
@@ -291,14 +291,14 @@ struct __BitSet<T> {
     static constexpr const bool is_signed = __NumData<T>::is_signed;
     static constexpr const bool is_radix  = __NumData<T>::is_radix;
 
-    HELIX_FORCE_INLINE static constexpr __BitSet max_value() noexcept { return max; }
-    HELIX_FORCE_INLINE static constexpr __BitSet min_value() noexcept { return min; }
-    HELIX_FORCE_INLINE constexpr T               abs() const noexcept {
+    KAIRO_FORCE_INLINE static constexpr __BitSet max_value() noexcept { return max; }
+    KAIRO_FORCE_INLINE static constexpr __BitSet min_value() noexcept { return min; }
+    KAIRO_FORCE_INLINE constexpr T               abs() const noexcept {
         return is_signed ? (value < 0 ? -value : value) : value;
     }
 
     // Conversion to a narrow C-string.
-    [[nodiscard]] HELIX_FORCE_INLINE const char *to_cstr() const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE const char *to_cstr() const noexcept {
         static thread_local char buf[digits + 1];
         __BitSet                 copy = *this;
         int                      pos  = 0;
@@ -325,7 +325,7 @@ struct __BitSet<T> {
     }
 
     // Conversion to a wide C-string.
-    [[nodiscard]] HELIX_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
         static thread_local wchar_t buf[digits + 1];
         __BitSet                    copy = *this;
         int                         pos  = 0;
@@ -352,12 +352,12 @@ struct __BitSet<T> {
     }
 
     // Explicit conversion to bool.
-    HELIX_FORCE_INLINE constexpr explicit operator bool() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator bool() const noexcept {
         return *this != __BitSet(0);
     }
 
     // ── Parsing from a Narrow C-string ──
-    HELIX_FORCE_INLINE static constexpr __BitSet from_cstr(const char    *ptr,
+    KAIRO_FORCE_INLINE static constexpr __BitSet from_cstr(const char    *ptr,
                                                            libcxx::size_t len) noexcept {
         int            base  = 10;
         libcxx::size_t start = 0;
@@ -390,7 +390,7 @@ struct __BitSet<T> {
     }
 
     // ── Parsing from a Wide C-string ──
-    HELIX_FORCE_INLINE static constexpr __BitSet from_cstr(const wchar_t *ptr,
+    KAIRO_FORCE_INLINE static constexpr __BitSet from_cstr(const wchar_t *ptr,
                                                            libcxx::size_t len) noexcept {
         int            base  = 10;
         libcxx::size_t start = 0;
@@ -431,15 +431,15 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     __BitSet<Head>    head;
     __BitSet<Tail...> tail;
 
-    HELIX_FORCE_INLINE constexpr __BitSet()
+    KAIRO_FORCE_INLINE constexpr __BitSet()
         : head(0)
         , tail() {}
 
-    HELIX_FORCE_INLINE constexpr __BitSet(Head h)
+    KAIRO_FORCE_INLINE constexpr __BitSet(Head h)
         : head(h)
         , tail() {}
 
-    HELIX_FORCE_INLINE constexpr __BitSet(Head h, Tail... t)
+    KAIRO_FORCE_INLINE constexpr __BitSet(Head h, Tail... t)
         : head(h)
         , tail(t...) {}
 
@@ -452,7 +452,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     _Pragma("GCC diagnostic pop") _Pragma("clang diagnostic pop") _Pragma("warning(pop)")
 
     // Signed conversions
-    HELIX_FORCE_INLINE constexpr explicit operator signed char() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator signed char() const noexcept {
         NARROWING_WARNING_PUSH
         signed char result = static_cast<signed char>(tail) +
                              (static_cast<signed char>(head) << __BitSet<Tail...>::bits());
@@ -460,7 +460,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator signed short() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator signed short() const noexcept {
         NARROWING_WARNING_PUSH
         signed short result = static_cast<signed short>(tail) +
                               (static_cast<signed short>(head) << __BitSet<Tail...>::bits());
@@ -468,7 +468,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator signed int() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator signed int() const noexcept {
         NARROWING_WARNING_PUSH
         signed int result = static_cast<signed int>(tail) +
                             (static_cast<signed int>(head) << __BitSet<Tail...>::bits());
@@ -476,7 +476,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator signed long() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator signed long() const noexcept {
         NARROWING_WARNING_PUSH
         signed long result = static_cast<signed long>(tail) +
                              (static_cast<signed long>(head) << __BitSet<Tail...>::bits());
@@ -484,7 +484,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator signed long long() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator signed long long() const noexcept {
         NARROWING_WARNING_PUSH
         signed long long result =
             static_cast<signed long long>(tail) +
@@ -494,7 +494,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     }
 
     // Unsigned conversions
-    HELIX_FORCE_INLINE constexpr explicit operator unsigned char() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator unsigned char() const noexcept {
         NARROWING_WARNING_PUSH
         unsigned char result = static_cast<unsigned char>(tail) +
                                (static_cast<unsigned char>(head) << __BitSet<Tail...>::bits());
@@ -502,7 +502,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator unsigned short() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator unsigned short() const noexcept {
         NARROWING_WARNING_PUSH
         unsigned short result = static_cast<unsigned short>(tail) +
                                 (static_cast<unsigned short>(head) << __BitSet<Tail...>::bits());
@@ -510,7 +510,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator unsigned int() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator unsigned int() const noexcept {
         NARROWING_WARNING_PUSH
         unsigned int result = static_cast<unsigned int>(tail) +
                               (static_cast<unsigned int>(head) << __BitSet<Tail...>::bits());
@@ -518,7 +518,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator unsigned long() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator unsigned long() const noexcept {
         NARROWING_WARNING_PUSH
         unsigned long result = static_cast<unsigned long>(tail) +
                                (static_cast<unsigned long>(head) << __BitSet<Tail...>::bits());
@@ -526,7 +526,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator unsigned long long() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator unsigned long long() const noexcept {
         NARROWING_WARNING_PUSH
         unsigned long long result =
             static_cast<unsigned long long>(tail) +
@@ -539,19 +539,19 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
 #undef NARROWING_WARNING_POP
 
     // Total bits = bits in head + bits in tail.
-    HELIX_FORCE_INLINE static constexpr unsigned bits() noexcept {
+    KAIRO_FORCE_INLINE static constexpr unsigned bits() noexcept {
         return __BitSet<Head>::digits + __BitSet<Tail...>::bits();
     }
 
     // Get and set a bit (bit 0 is the least-significant, living in the tail).
-    [[nodiscard]] HELIX_FORCE_INLINE constexpr bool get_bit(unsigned idx) const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE constexpr bool get_bit(unsigned idx) const noexcept {
         constexpr unsigned tail_bits = __BitSet<Tail...>::bits();
         if (idx < tail_bits) {
             return tail.get_bit(idx);
         }
         return ((head >> (idx - tail_bits)) & __BitSet(1));
     }
-    HELIX_FORCE_INLINE constexpr void set_bit(unsigned idx, bool b) noexcept {
+    KAIRO_FORCE_INLINE constexpr void set_bit(unsigned idx, bool b) noexcept {
         constexpr unsigned tail_bits = __BitSet<Tail...>::bits();
         if (idx < tail_bits) {
             tail.set_bit(idx, b);
@@ -566,29 +566,29 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     }
 
     // ── Arithmetic Operators ──
-    HELIX_FORCE_INLINE constexpr __BitSet operator+(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator+(const __BitSet &other) const noexcept {
         __BitSet result;
         result.tail = tail + other.tail;
         bool carry  = (result.tail < tail);
         result.head = head + other.head + __BitSet(carry ? 1 : 0);
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator+=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator+=(const __BitSet &other) noexcept {
         *this = *this + other;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator-(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator-(const __BitSet &other) const noexcept {
         __BitSet result;
         bool     borrow = (tail < other.tail);
         result.tail     = tail - other.tail;
         result.head     = head - other.head - __BitSet<decltype(head.value)>(borrow ? 1 : 0);
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator-=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator-=(const __BitSet &other) noexcept {
         *this = *this - other;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator*(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator*(const __BitSet &other) const noexcept {
         __BitSet result(0);
         unsigned total_bits = bits();
         for (unsigned i = 0; i < total_bits; i++) {
@@ -598,11 +598,11 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator*=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator*=(const __BitSet &other) noexcept {
         *this = *this * other;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator/(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator/(const __BitSet &other) const noexcept {
         __BitSet quotient(0);
         __BitSet remainder(0);
         unsigned total_bits = bits();
@@ -616,50 +616,50 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         }
         return quotient;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator/=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator/=(const __BitSet &other) noexcept {
         *this = *this / other;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator%(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator%(const __BitSet &other) const noexcept {
         __BitSet quotient = *this / other;
         return *this - (quotient * other);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator%=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator%=(const __BitSet &other) noexcept {
         *this = *this % other;
         return *this;
     }
 
     // ── Bitwise Operators (elementwise) ──
-    HELIX_FORCE_INLINE constexpr __BitSet operator&(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator&(const __BitSet &other) const noexcept {
         return __BitSet(head & other.head, tail & other.tail);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator|(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator|(const __BitSet &other) const noexcept {
         return __BitSet(head | other.head, tail | other.tail);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator^(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator^(const __BitSet &other) const noexcept {
         return __BitSet(head ^ other.head, tail ^ other.tail);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator~() const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator~() const noexcept {
         return __BitSet(~head, ~tail);
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator&=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator&=(const __BitSet &other) noexcept {
         head &= other.head;
         tail &= other.tail;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator|=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator|=(const __BitSet &other) noexcept {
         head |= other.head;
         tail |= other.tail;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator^=(const __BitSet &other) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator^=(const __BitSet &other) noexcept {
         head ^= other.head;
         tail ^= other.tail;
         return *this;
     }
 
     // ── Shift Operators ──
-    HELIX_FORCE_INLINE constexpr __BitSet operator<<(unsigned shift) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator<<(unsigned shift) const noexcept {
         __BitSet result(0);
         unsigned total_bits = bits();
         for (unsigned i = 0; i < total_bits; i++) {
@@ -671,11 +671,11 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator<<=(unsigned shift) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator<<=(unsigned shift) noexcept {
         *this = *this << shift;
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator>>(unsigned shift) const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator>>(unsigned shift) const noexcept {
         __BitSet result(0);
         unsigned total_bits = bits();
         for (unsigned i = shift; i < total_bits; i++) {
@@ -685,39 +685,39 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         }
         return result;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator>>=(unsigned shift) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator>>=(unsigned shift) noexcept {
         *this = *this >> shift;
         return *this;
     }
 
     // ── Increment / Decrement ──
-    HELIX_FORCE_INLINE constexpr __BitSet &operator++() noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator++() noexcept {
         *this += __BitSet(1);
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator++(int) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator++(int) noexcept {
         __BitSet temp = *this;
         ++(*this);
         return temp;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet &operator--() noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet &operator--() noexcept {
         *this -= __BitSet(1);
         return *this;
     }
-    HELIX_FORCE_INLINE constexpr __BitSet operator--(int) noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet operator--(int) noexcept {
         __BitSet temp = *this;
         --(*this);
         return temp;
     }
 
     // ── Comparison Operators (lexicographical: head first) ──
-    HELIX_FORCE_INLINE constexpr bool operator==(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator==(const __BitSet &other) const noexcept {
         return head == other.head && tail == other.tail;
     }
-    HELIX_FORCE_INLINE constexpr bool operator!=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator!=(const __BitSet &other) const noexcept {
         return !(*this == other);
     }
-    HELIX_FORCE_INLINE constexpr bool operator<(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator<(const __BitSet &other) const noexcept {
         if (head < other.head) {
             return true;
         }
@@ -726,38 +726,38 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         }
         return tail < other.tail;
     }
-    HELIX_FORCE_INLINE constexpr bool operator<=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator<=(const __BitSet &other) const noexcept {
         return (*this < other) || (*this == other);
     }
-    HELIX_FORCE_INLINE constexpr bool operator>(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator>(const __BitSet &other) const noexcept {
         return !(*this <= other);
     }
-    HELIX_FORCE_INLINE constexpr bool operator>=(const __BitSet &other) const noexcept {
+    KAIRO_FORCE_INLINE constexpr bool operator>=(const __BitSet &other) const noexcept {
         return !(*this < other);
     }
 
     static constexpr unsigned digits = __BitSet<Head>::digits + __BitSet<Tail...>::digits;
 
-    HELIX_FORCE_INLINE static constexpr __BitSet max_value() noexcept {
+    KAIRO_FORCE_INLINE static constexpr __BitSet max_value() noexcept {
         return __BitSet(__BitSet<Head>::max_value(), __BitSet<Tail...>::max_value());
     }
-    HELIX_FORCE_INLINE static constexpr __BitSet min_value() noexcept {
+    KAIRO_FORCE_INLINE static constexpr __BitSet min_value() noexcept {
         return __BitSet(static_cast<Head>(0), __BitSet<Tail...>::min_value());
     }
 
     static constexpr bool is_signed = __BitSet<Head>::is_signed;
     static constexpr bool is_radix  = __BitSet<Head>::is_radix;
 
-    HELIX_FORCE_INLINE constexpr __BitSet abs() const noexcept {
+    KAIRO_FORCE_INLINE constexpr __BitSet abs() const noexcept {
         return __BitSet(head.abs(), tail.abs());
     }
 
-    HELIX_FORCE_INLINE constexpr explicit operator bool() const noexcept {
+    KAIRO_FORCE_INLINE constexpr explicit operator bool() const noexcept {
         return !(*this == __BitSet(0, __BitSet<Tail...>::min));
     }
 
     // ── Conversion to C-string (narrow) ──
-    [[nodiscard]] HELIX_FORCE_INLINE const char *to_cstr() const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE const char *to_cstr() const noexcept {
         static thread_local char buf[digits + 1];
         __BitSet                 copy = *this;
         int                      pos  = 0;
@@ -784,7 +784,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     }
 
     // ── Conversion to C-string (wide) ──
-    [[nodiscard]] HELIX_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
+    [[nodiscard]] KAIRO_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
         static thread_local wchar_t buf[digits + 1];
         __BitSet                    copy = *this;
         int                         pos  = 0;
@@ -811,7 +811,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     }
 
     // ── Parsing from a Narrow C-string ──
-    HELIX_FORCE_INLINE static __BitSet from_cstr(const char *ptr, libcxx::size_t len) noexcept {
+    KAIRO_FORCE_INLINE static __BitSet from_cstr(const char *ptr, libcxx::size_t len) noexcept {
         int            base  = 10;
         libcxx::size_t start = 0;
         if (len >= 2 && ptr[0] == '0') {
@@ -844,7 +844,7 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
     }
 
     // ── Parsing from a Wide C-string ──
-    HELIX_FORCE_INLINE static __BitSet from_cstr(const wchar_t *ptr, libcxx::size_t len) noexcept {
+    KAIRO_FORCE_INLINE static __BitSet from_cstr(const wchar_t *ptr, libcxx::size_t len) noexcept {
         int            base  = 10;
         libcxx::size_t start = 0;
         if (len >= 2 && ptr[0] == L'0') {
@@ -897,7 +897,7 @@ template class __BitSet<__BitSet<unsigned long long>, __BitSet<unsigned long lon
 // -----------------------------------------------------------------------------
 // ── Addition ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator+(const __BitSet<T> &lhs, U rhs) noexcept
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator+(const __BitSet<T> &lhs, U rhs) noexcept
     DIAGNOSE_IF(((__builtin_constant_p(rhs) && __builtin_constant_p(lhs.value)) &&
                      (__NumData<T>::is_signed ? ((lhs > 0 && rhs > __NumData<T>::max - lhs) ||
                                                  (lhs < 0 && rhs < __NumData<T>::min - lhs))
@@ -908,167 +908,167 @@ HELIX_FORCE_INLINE constexpr __BitSet<T> operator+(const __BitSet<T> &lhs, U rhs
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator+(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator+(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) + rhs;
 }
 
 // ── Subtraction ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator-(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator-(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs - __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator-(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator-(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) - rhs;
 }
 
 // ── Multiplication ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator*(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator*(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs * __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator*(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator*(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) * rhs;
 }
 
 // ── Division ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator/(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator/(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs / __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator/(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator/(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) / rhs;
 }
 
 // ── Modulo ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator%(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator%(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs % __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator%(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator%(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) % rhs;
 }
 
 // ── Bitwise AND ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator&(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator&(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs & __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator&(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator&(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) & rhs;
 }
 
 // ── Bitwise OR ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator|(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator|(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs | __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator|(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator|(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) | rhs;
 }
 
 // ── Bitwise XOR ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator^(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator^(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs ^ __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator^(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator^(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) ^ rhs;
 }
 
 // ── Left Shift ── (shift count must be integral)
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_integral_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator<<(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator<<(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs << static_cast<unsigned>(rhs);
 }
 
 // ── Right Shift ── (shift count must be integral)
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_integral_v<U>>>
-HELIX_FORCE_INLINE constexpr __BitSet<T> operator>>(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr __BitSet<T> operator>>(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs >> static_cast<unsigned>(rhs);
 }
 
 // ── Equality Comparison ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator==(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator==(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs == __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator==(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator==(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) == rhs;
 }
 
 // ── Inequality Comparison ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator!=(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator!=(const __BitSet<T> &lhs, U rhs) noexcept {
     return !(lhs == rhs);
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator!=(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator!=(U lhs, const __BitSet<T> &rhs) noexcept {
     return !(lhs == rhs);
 }
 
 // ── Less Than ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator<(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator<(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs < __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator<(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator<(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) < rhs;
 }
 
 // ── Less Than or Equal ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator<=(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator<=(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs <= __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator<=(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator<=(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) <= rhs;
 }
 
 // ── Greater Than ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator>(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator>(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs > __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator>(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator>(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) > rhs;
 }
 
 // ── Greater Than or Equal ──
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator>=(const __BitSet<T> &lhs, U rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator>=(const __BitSet<T> &lhs, U rhs) noexcept {
     return lhs >= __BitSet<T>(static_cast<T>(rhs));
 }
 
 template <typename U, typename T, typename = std::Meta::enable_if<libcxx::is_arithmetic_v<U>>>
-HELIX_FORCE_INLINE constexpr bool operator>=(U lhs, const __BitSet<T> &rhs) noexcept {
+KAIRO_FORCE_INLINE constexpr bool operator>=(U lhs, const __BitSet<T> &rhs) noexcept {
     return __BitSet<T>(static_cast<T>(lhs)) >= rhs;
 }
 
 namespace std::Reflection {
-HELIX_FORCE_INLINE constexpr usize cstr_length(const char *str) {
+KAIRO_FORCE_INLINE constexpr usize cstr_length(const char *str) {
     return (*str != 0) ? usize(1 + cstr_length(str + 1)) : usize(0);
 }
 }  // namespace std::Reflection

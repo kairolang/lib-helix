@@ -1,6 +1,6 @@
 {
   "namespace": "std::String",
-  "description": "String types and string manipulation utilities for the Helix language",
+  "description": "String types and string manipulation utilities for the Kairo language",
   "classes": [
     {
       "name": "basic<Char, Traits>",

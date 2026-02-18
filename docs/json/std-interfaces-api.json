@@ -1,6 +1,6 @@
 {
   "namespace": "std::Interfaces",
-  "description": "Type interfaces and concept definitions for the Helix standard library",
+  "description": "Type interfaces and concept definitions for the Kairo standard library",
   "interfaces": [
     {
       "name": "SupportsPointerCast<T>",
@@ -21,7 +21,7 @@
     {
       "name": "ConvertibleToString<T>",
       "description": "Interface for types that can be converted to string",
-      "requirements": "Has `fn op as(self) -> string` operator or supports C++ Ostream insertion or C++ implicit conversion to helix::string",
+      "requirements": "Has `fn op as(self) -> string` operator or supports C++ Ostream insertion or C++ implicit conversion to kairo::string",
       "example": {
         "main": "fn main() -> void {\n    var num: i32 = 42;\n    var str: string = std::to_string(num); // i32 must be ConvertibleToString<i32>\n    print(str);\n}"
       }

@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,20 +9,20 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///------------------------------------------------------------------------------------ Helix ---///
+///------------------------------------------------------------------------------------ Kairo ---///
 /// \file cast.hh                                                                                ///
 ///                                                                                              ///
-/// Provides `as` casting semantics in Helix, enabling safe and versatile casting operations.    ///
+/// Provides `as` casting semantics in Kairo, enabling safe and versatile casting operations.    ///
 /// These include standard type casting (`as_cast`), const casting (`as_const`), and unsafe      ///
 /// reinterpretation casting (`as_unsafe`). This framework is designed to integrate seamlessly   ///
-/// with Helix's runtime and type system, supporting dynamic, static, and user-defined casting   ///
+/// with Kairo's runtime and type system, supporting dynamic, static, and user-defined casting   ///
 /// mechanisms where appropriate.                                                                ///
 ///                                                                                              ///
 /// ### Purpose                                                                                  ///
-/// - Facilitates the use of Helix-specific `as` casting constructs.                             ///
-/// - Offers a type-safe interface for performing various cast operations, adhering to Helix's   ///
+/// - Facilitates the use of Kairo-specific `as` casting constructs.                             ///
+/// - Offers a type-safe interface for performing various cast operations, adhering to Kairo's   ///
 ///   runtime semantics and ensuring compatibility with custom user-defined types.               ///
 ///                                                                                              ///
 /// ### Features                                                                                 ///
@@ -31,7 +31,7 @@
 ///   - Const casting.                                                                           ///
 ///   - Pointer casting (dynamic and static based on type constraints).                          ///
 ///   - Reference casting.                                                                       ///
-///   - Helix-specific `operator$cast` for user-defined casting.                                 ///
+///   - Kairo-specific `operator$cast` for user-defined casting.                                 ///
 ///   - Default static casting as a fallback.                                                    ///
 ///                                                                                              ///
 /// #### `as_const`                                                                              ///
@@ -43,7 +43,7 @@
 /// - Primarily intended for low-level operations where type safety is explicitly disregarded.   ///
 ///                                                                                              ///
 /// ### Examples                                                                                 ///
-/// ```helix                                                                                     ///
+/// ```kairo                                                                                     ///
 /// let x: i32 = 42;                                                                             ///
 /// let y: i32* = x as i32*;             // Uses `as_cast` for pointer casting.                  ///
 /// let z: const i32* = x as const i32*; // Uses `as_const` for const pointer casting.           ///
@@ -62,10 +62,10 @@
 ///                                                                                              ///
 /// ### Implementation Details                                                                   ///
 /// - `as_cast` leverages interfaces like `SupportsPointerCast` and `Castable` to ensure         ///
-///   compatibility with Helix-specific features.                                                ///
+///   compatibility with Kairo-specific features.                                                ///
 /// - `as_const` and `as_unsafe` provide implementations for const and unsafe casting.           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M7AS_CAST
 #define _$_HX_CORE_M7AS_CAST

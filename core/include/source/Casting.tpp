@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M7CASTING_TPP
 #define _$_HX_CORE_M7CASTING_TPP
@@ -46,13 +46,13 @@ Ty as_cast(Up &value) {
     }
 
     // Code below is not reachable, but we need to keep it for the sake of the compiler
-    _HELIX_SUPPRESS_UNREACHABLE_WARN_PUSH
+    _KAIRO_SUPPRESS_UNREACHABLE_WARN_PUSH
     if constexpr (std::Meta::is_const<Ty>) {
         return const_cast<Ty>(value);
     }
 
     return static_cast<Ty>(value);
-    _HELIX_SUPPRESS_UNREACHABLE_WARN_POP
+    _KAIRO_SUPPRESS_UNREACHABLE_WARN_POP
 }
 
 template <typename Ty, typename Up>
@@ -61,9 +61,9 @@ Ty as_cast(const Up &value) {
         return static_cast<Ty>(value);
     }
 
-    _HELIX_SUPPRESS_UNREACHABLE_WARN_PUSH
+    _KAIRO_SUPPRESS_UNREACHABLE_WARN_PUSH
     return as_cast<Ty>(const_cast<Up &>(value));
-    _HELIX_SUPPRESS_UNREACHABLE_WARN_POP
+    _KAIRO_SUPPRESS_UNREACHABLE_WARN_POP
 }
 
 template <typename Ty, typename Up>

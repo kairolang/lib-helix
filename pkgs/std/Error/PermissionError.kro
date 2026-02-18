@@ -1,0 +1,45 @@
+///--- The Kairo Project ------------------------------------------------------------------------///
+///                                                                                              ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
+///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
+///   were made.                                                                                 ///
+///                                                                                              ///
+///   For more information on the license terms and requirements, please visit:                  ///
+///     https://creativecommons.org/licenses/by/4.0/                                             ///
+///                                                                                              ///
+///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
+///                                                                                              ///
+///-------------------------------------------------------------------------------- lib-helix ---///
+
+// import IOError;
+
+/// Error when an operation is denied due to insufficient permissions
+default class PermissionError derives std::Error::IOError {
+    /// Constructor with filepath
+    fn PermissionError(self, path: string, operation: string) {
+        IOError.IOError(f"Permission denied: \'{path}\' (operation: {operation})");
+    }
+    
+    /// Constructor with path and error code
+    fn PermissionError(self, path: string, operation: string, error_code: i32) {
+        IOError.IOError(f"Permission denied: '{path}' (operation: {operation})", error_code);
+    }
+    
+    /// Constructor with custom message
+    fn PermissionError(self, msg: string) {
+        IOError.IOError(msg);
+    }
+    
+    /// Constructor with custom message and error code
+    fn PermissionError(self, msg: string, error_code: i32) {
+        IOError.IOError(msg, error_code);
+    }
+    
+    /// Default constructor
+    default fn PermissionError(self);
+
+    /// Virtual destructor
+    override default fn op delete (self);
+}

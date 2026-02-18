@@ -1,6 +1,6 @@
 {
   "namespace": "std::Panic",
-  "description": "Panic handling and error propagation system for the Helix language",
+  "description": "Panic handling and error propagation system for the Kairo language",
   "classes": [
     {
       "name": "FrameContext",
@@ -94,7 +94,7 @@
       "operators": [
         {
           "name": "operator panic",
-          "description": "Panic operator used in helix code as 'panic ...'",
+          "description": "Panic operator used in kairo code as 'panic ...'",
           "signature": "op panic(self) -> void",
           "syntax": "panic ...",
           "specifiers": ["noreturn"],

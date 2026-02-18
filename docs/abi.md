@@ -1,18 +1,18 @@
-# Helix ABI Specification
+# Kairo ABI Specification
 
-This document defines the Application Binary Interface (ABI) for the Helix programming language. The Helix ABI is largely based on the Itanium C++ ABI but differs in naming conventions to align with Helix's language design principles. Changes to naming conventions are reflected throughout this document where relevant.
+This document defines the Application Binary Interface (ABI) for the Kairo programming language. The Kairo ABI is largely based on the Itanium C++ ABI but differs in naming conventions to align with Kairo's language design principles. Changes to naming conventions are reflected throughout this document where relevant.
 
 ---
 
 ## Overview
 
-The Helix ABI provides a standardized way for Helix programs to interact at the binary level, ensuring compatibility across different implementations of the Helix compiler and runtime. It specifies conventions for function calls, data layout, type encoding, and symbol mangling.
+The Kairo ABI provides a standardized way for Kairo programs to interact at the binary level, ensuring compatibility across different implementations of the Kairo compiler and runtime. It specifies conventions for function calls, data layout, type encoding, and symbol mangling.
 
 ---
 
 ## Function Calling Convention
 
-The Helix ABI follows the same function calling convention as the Itanium ABI:
+The Kairo ABI follows the same function calling convention as the Itanium ABI:
 
 - The first six arguments are passed in registers, with specific registers used depending on the architecture (e.g., `rdi`, `rsi`, `rdx`, `rcx`, `r8`, `r9` on x86-64).
 - Additional arguments are passed on the stack.
@@ -22,9 +22,9 @@ The Helix ABI follows the same function calling convention as the Itanium ABI:
 
 ## Data Types
 
-The data types in the Helix ABI match those in the Itanium ABI but use Helix-specific naming conventions.
+The data types in the Kairo ABI match those in the Itanium ABI but use Kairo-specific naming conventions.
 
-| **Helix Type**  | **Description**                             |
+| **Kairo Type**  | **Description**                             |
 |-----------------|---------------------------------------------|
 | `i8`            | 8-bit signed integer (also used for `char`) |
 | `i16`           | 16-bit signed integer                       |
@@ -49,15 +49,15 @@ The data types in the Helix ABI match those in the Itanium ABI but use Helix-spe
 
 ---
 
-# Helix Name Mangling Scheme Specification
+# Kairo Name Mangling Scheme Specification
 
-The Helix Name Mangling Scheme provides a systematic and precise way to encode entity names into unique strings for use in linkage, runtime type identification, and compatibility. This system is based on the **Itanium ABI**, modified to align with Helix's syntax, semantics, and features as defined in the language and type system.
+The Kairo Name Mangling Scheme provides a systematic and precise way to encode entity names into unique strings for use in linkage, runtime type identification, and compatibility. This system is based on the **Itanium ABI**, modified to align with Kairo's syntax, semantics, and features as defined in the language and type system.
 
 ---
 
 ## General Structure of Mangled Names
 
-The mangling for any Helix entity follows this general pattern:
+The mangling for any Kairo entity follows this general pattern:
 
 ```
 _HX_<EntityType><EncodedName><EncodedParameters><AdditionalMetadata>
@@ -65,7 +65,7 @@ _HX_<EntityType><EncodedName><EncodedParameters><AdditionalMetadata>
 
 ### Components
 1. **_HX_**:
-   - Prefix for all mangled names, indicating they adhere to the Helix ABI.
+   - Prefix for all mangled names, indicating they adhere to the Kairo ABI.
 
 2. **EntityType**:
    - Indicates the type of entity (e.g., function, type, vtable, etc.).
@@ -109,9 +109,9 @@ The `EntityType` defines the category of the mangled name:
 | `_Q`          | `?` (optional) qualifier  |
 | `_R`          | Return type qualifier     |
  
-## Helix Type Encoding
+## Kairo Type Encoding
 
-The following table defines type encodings for the Helix type system.
+The following table defines type encodings for the Kairo type system.
 
 | **Type**                | **Encoding**           |
 |-------------------------|------------------------|
@@ -146,22 +146,22 @@ Modules, modules, and classes are encoded as:
 
 #### Examples
 1. Global function:
-   ```helix
+   ```kairo
    fn runtime_initialize() -> void;
    ```
    Mangled: `_HX_FN18runtime_initializeRv`
 
 2. Module nested function:
-   ```helix
-   module helix {
+   ```kairo
+   module kairo {
        fn runtime_initialize() -> void;
    }
    ```
-   Mangled: `_HX_FN29helix_runtime_initialize`
+   Mangled: `_HX_FN29kairo_runtime_initialize`
 
 3. Nested classes:
-   ```helix
-   module helix {
+   ```kairo
+   module kairo {
        class Outer {
            class Inner {
                fn method() -> void;
@@ -169,7 +169,7 @@ Modules, modules, and classes are encoded as:
        }
    }
    ```
-   Mangled: `_HX_FN33helix_Outer_Inner_method`
+   Mangled: `_HX_FN33kairo_Outer_Inner_method`
 
 ---
 
@@ -183,36 +183,36 @@ _HX_RM<Length><Name><RequiresParameters>
 
 #### Examples
 1. Single parameter:
-   ```helix
+   ```kairo
    struct Vector requires <T>;
    ```
    Mangled: `_HX_RM6Vector_T`
 
 2. Instantiation:
-   ```helix
+   ```kairo
    Vector<i32>;
    ```
    Mangled: `_HX_RM11Vector_i32`
 
 3. Nested requires:
-   ```helix
+   ```kairo
    Vector<Vector<i32>>;
    ```
    Mangled: `_HX_RM18Vector_RM11Vector_i32`
 
 4. Module nested requires:
-   ```helix
-   module helix {
+   ```kairo
+   module kairo {
        struct Pair requires <T, U>;
    }
    Pair<i32, f32>;
    ```
-   Mangled: `_HX_RM22helix_Pair_i32f32`
+   Mangled: `_HX_RM22kairo_Pair_i32f32`
 
 ---
 
 ### Function Parameters
-Function parameters are encoded in the order they appear, using the **Helix Type Encoding**.
+Function parameters are encoded in the order they appear, using the **Kairo Type Encoding**.
 
 #### Function Syntax
 ```
@@ -221,25 +221,25 @@ _HX_FN<Length><Module_and_FunctionName><EncodedParameters>
 
 #### Examples
 1. Function with parameters:
-   ```helix
+   ```kairo
    fn add(a: i32, b: i32) -> i32;
    ```
    Mangled: `_HX_FN9addi32i32`
 
 2. Function pointer:
-   ```helix
+   ```kairo
    fn apply(func: fn (i32, i32) -> i32) -> void;
    ```
    Mangled: `_HX_FN10applyFN_i32i32_i32`
 
 3. Const overloading:
-   ```helix
+   ```kairo
    fn add(a: i32, b: i32) const -> i32;
    ```
    Mangled: `_HX_FN13addi32i32_C`
 
 4. Unsafe overloading:
-   ```helix
+   ```kairo
    fn add(a: i32, b: i32) unsafe -> i32;
    ```
    Mangled: `_HX_FN17addi32i32_U`
@@ -253,19 +253,19 @@ Operators if they have an alias, get 2 encodings, one for the operator and one f
 
 #### Examples
 1. Binary operator:
-   ```helix
+   ```kairo
    fn op + (a: i32, b: i32) -> i32;
    ```
    Mangled: `_HX_OP$sym_add$i32i32`
 
 2. Unary operator with alias:
-   ```helix
+   ```kairo
    fn op l- (a: i32)[prefix_negate] -> i32;
    ```
    Mangled: `_HX_OP$sym_lsub$i32_Ri32`; `_HX_FN12prefix_negatei32`
 
 3. Assignment operator:
-   ```helix
+   ```kairo
    fn op = (a: self)[set] -> *self;
    ```
    Mangled: `_HX_OP$sym_eq$selfself`
@@ -276,14 +276,14 @@ Operators if they have an alias, get 2 encodings, one for the operator and one f
 
 1. **RTTI**:
    Encoded with `_HX_TI`:
-   ```helix
+   ```kairo
    class MyClass;
    ```
    Mangled: `_HX_TI7MyClass`
 
 2. **Virtual Table**:
    Encoded with `_HX_VT`:
-   ```helix
+   ```kairo
    class MyClass {
        virtual fn foo() -> void;
    }
@@ -296,13 +296,13 @@ Operators if they have an alias, get 2 encodings, one for the operator and one f
 
 ### Functions
 1. A function pointer returning `f32`:
-   ```helix
+   ```kairo
    fn callback(fn (i32, i32) -> f32) -> void;
    ```
    Mangled: `_HX_FN12callback_FN_i32i32_f32`
 
 2. A generic function in a module:
-   ```helix
+   ```kairo
    module math {
        fn max(a: T, b: T) -> T requires <T>;
    }
@@ -314,7 +314,7 @@ Operators if they have an alias, get 2 encodings, one for the operator and one f
 
 ## Exception Handling
 
-The Helix ABI uses the same exception handling model as the Itanium ABI, including stack unwinding and type-based exception matching.
+The Kairo ABI uses the same exception handling model as the Itanium ABI, including stack unwinding and type-based exception matching.
 
 ### Mangling of Exception-Related Symbols
 
@@ -326,7 +326,7 @@ The Helix ABI uses the same exception handling model as the Itanium ABI, includi
 
 ## Object Layout
 
-The Helix ABI uses the same rules as the Itanium ABI for object layout, including:
+The Kairo ABI uses the same rules as the Itanium ABI for object layout, including:
 - Base class offsets.
 - Virtual base pointer positions.
 - Alignment and padding rules.

@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M3ABI
 #define _$_HX_CORE_M3ABI
@@ -256,7 +256,7 @@ inline string demangle_partial(const string &input) {
             string mangled = input.subslice(i, end_pos - i + 3);  // include "_E$"
             string dem     = demangle(mangled, ty);
 
-            // For Modules, keep only basename (strip dirs + .hlx)
+            // For Modules, keep only basename (strip dirs + .kro)
             if (ty == ObjectType::Module) {
                 dem = basename_no_ext(dem);
             }
@@ -272,11 +272,11 @@ inline string demangle_partial(const string &input) {
 }
 
 
-// --- Utility: remove leading "helix::" (and the "::helix::" variant)
-inline string strip_helix_prefix(const string &input) {
+// --- Utility: remove leading "kairo::" (and the "::kairo::" variant)
+inline string strip_kairo_prefix(const string &input) {
     const libcxx::wstring raw    = input.raw_string();
-    const libcxx::wstring prefix = L"helix::";
-    const libcxx::wstring midfix = L"::helix::";
+    const libcxx::wstring prefix = L"kairo::";
+    const libcxx::wstring midfix = L"::kairo::";
     
     libcxx::wstring result;
     result.reserve(raw.size());

@@ -1,7 +1,7 @@
 {
-  "helix_api_documentation": {
+  "kairo_api_documentation": {
     "version": "1.0",
-    "description": "Comprehensive API documentation for the Helix programming language",
+    "description": "Comprehensive API documentation for the Kairo programming language",
     "last_updated": "2025-07-04",
     "documentation_files": [
       {
@@ -13,7 +13,7 @@
       {
         "file": "std-interfaces-api.json",
         "namespace": "std::Interfaces",
-        "description": "Type interfaces and concept definitions for the Helix standard library",
+        "description": "Type interfaces and concept definitions for the Kairo standard library",
         "contains": ["Type constraints", "Concept definitions", "Interface requirements"]
       },
       {
@@ -25,7 +25,7 @@
       {
         "file": "std-core-api.json",
         "namespace": "std",
-        "description": "Core standard library functions and types for the Helix language",
+        "description": "Core standard library functions and types for the Kairo language",
         "contains": ["Core functions", "Type casting", "Generators", "Range operations", "String conversion"]
       },
       {
@@ -43,19 +43,19 @@
       {
         "file": "std-memory-api.json",
         "namespace": "std::Memory",
-        "description": "Memory management utilities and operations for the Helix language",
+        "description": "Memory management utilities and operations for the Kairo language",
         "contains": ["Memory allocation", "Memory operations", "Address type checking", "Memory utilities"]
       },
       {
         "file": "std-panic-api.json",
         "namespace": "std::Panic",
-        "description": "Panic handling and error propagation system for the Helix language",
+        "description": "Panic handling and error propagation system for the Kairo language",
         "contains": ["Panic frames", "Error context", "Panic operators"]
       },
       {
         "file": "std-panic-interface-api.json",
         "namespace": "std::Panic::Interface",
-        "description": "Interface definitions for panic-capable types in the Helix language",
+        "description": "Interface definitions for panic-capable types in the Kairo language",
         "contains": ["Panic interfaces", "Panic requirements", "Panic implementations"]
       },
       {
@@ -67,7 +67,7 @@
       {
         "file": "std-error-api.json",
         "namespace": "std::Error",
-        "description": "Standard error types for the Helix language",
+        "description": "Standard error types for the Kairo language",
         "contains": ["Error base class", "Standard error types", "Error handling"]
       },
       {
@@ -79,19 +79,19 @@
       {
         "file": "global-api.json",
         "namespace": "global",
-        "description": "Global functions and macros available throughout the Helix language",
+        "description": "Global functions and macros available throughout the Kairo language",
         "contains": ["Global functions", "Macros", "Print functions"]
       },
       {
         "file": "language-features-api.json",
-        "namespace": "helix::language_features",
-        "description": "Core language features and syntax elements of the Helix programming language",
+        "namespace": "kairo::language_features",
+        "description": "Core language features and syntax elements of the Kairo programming language",
         "contains": ["Language syntax", "Control flow", "Type system features", "Special syntax"]
       },
       {
         "file": "builtin-types-api.json",
-        "namespace": "helix::builtin_types",
-        "description": "Built-in primitive and container types in the Helix programming language",
+        "namespace": "kairo::builtin_types",
+        "description": "Built-in primitive and container types in the Kairo programming language",
         "contains": ["Primitive types", "Container types", "Type system"]
       }
     ],
@@ -107,16 +107,16 @@
       "examples": "Each entry includes a complete main function example showing usage"
     },
     "conventions": {
-      "helix_syntax": {
-        "questionable_types": "T? in Helix becomes Questionable<T> in C++",
-        "generators": "yield T in Helix becomes Generator<T> in C++",
+      "kairo_syntax": {
+        "questionable_types": "T? in Kairo becomes Questionable<T> in C++",
+        "generators": "yield T in Kairo becomes Generator<T> in C++",
         "references": "reference(T) macro creates &T references",
         "move_references": "move_reference(T) macro creates &&T rvalue references",
         "casting": "T as U syntax for type conversion",
         "nullable_syntax": "T? for nullable/panicable types"
       },
       "documentation_format": {
-        "functions": "Short description, Helix function signature, examples with main function, specifiers/modifiers",
+        "functions": "Short description, Kairo function signature, examples with main function, specifiers/modifiers",
         "classes": "Short description, class name, function documentation for each method, usage examples",
         "specifiers": "noexcept, const, constexpr, inline, static, etc.",
         "attributes": "nodiscard, noreturn, etc."

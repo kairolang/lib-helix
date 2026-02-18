@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M5BASIC
 #define _$_HX_CORE_M5BASIC
@@ -278,29 +278,29 @@ H_NAMESPACE_END
 
 namespace std {
 template <>
-struct hash<helix::string> {
-    size_t operator()(const helix::string &s) const noexcept {
+struct hash<kairo::string> {
+    size_t operator()(const kairo::string &s) const noexcept {
         return std::hash<std::wstring>{}(std::wstring(s.raw(), s.size()));
     }
 };
 
 template <>
-struct hash<helix::nstring> {
-    size_t operator()(const helix::nstring &s) const noexcept {
+struct hash<kairo::nstring> {
+    size_t operator()(const kairo::nstring &s) const noexcept {
         return std::hash<std::string>{}(std::string(s.raw(), s.size()));
     }
 };
 
 template <>
-struct hash<helix::string::slice> {
-    size_t operator()(const helix::string::slice &s) const noexcept {
+struct hash<kairo::string::slice> {
+    size_t operator()(const kairo::string::slice &s) const noexcept {
         return std::hash<std::wstring>{}(std::wstring(s.raw(), s.size()));
     }
 };
 
 template <>
-struct hash<helix::nstring::slice> {
-    size_t operator()(const helix::nstring::slice &s) const noexcept {
+struct hash<kairo::nstring::slice> {
+    size_t operator()(const kairo::nstring::slice &s) const noexcept {
         return std::hash<std::string>{}(std::string(s.raw(), s.size()));
     }
 };

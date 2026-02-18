@@ -1,0 +1,439 @@
+///--- The Kairo Project ------------------------------------------------------------------------///
+///                                                                                              ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
+///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
+///   were made.                                                                                 ///
+///                                                                                              ///
+///   For more information on the license terms and requirements, please visit:                  ///
+///     https://creativecommons.org/licenses/by/4.0/                                             ///
+///                                                                                              ///
+///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
+///                                                                                              ///
+///-------------------------------------------------------------------------------- lib-helix ---///
+
+#[trivially_import(true)] // prevents wrapping IR in a `handler` module, keeping the handler globally accessible
+
+/// \file
+/// Implements the global panic handler for the Kairo runtime.
+///
+/// This file defines the `HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_Rv` function to manage
+/// runtime panics. It logs error details and provides debugging information while ensuring
+/// inter-operation with C++ libraries through FFI.
+///
+/// Attributes:
+/// - `#[trivially_import(true)]`: Prevents the compiler from wrapping the Intermediate Representation (IR) in a module.
+/// - `ffi "c++" import "include/lang/panic.h";`: Links to the C++ runtime header for compatibility.
+///
+/// \note This panic handler is globally accessible to any Kairo module that wildcard-imports `core.kro`.
+
+ffi "c++" import "include/runtime/__panic/panic.hh";
+ffi "c++" import "include/runtime/__panic/stacktrace.hh";
+// ffi "c++" import "include/runtime/__panic/stacktrace.hh";
+
+/// \brief Displays runtime panic details and signals program termination.
+///
+/// This function is invoked when the program encounters an unrecoverable error.
+/// It logs the file, line, and reason for the panic, providing developers with
+/// actionable information for debugging.
+///
+/// \param frame
+///   A pointer to `std::Panic::Frame` that contains details about the panic:
+///   - `file`:   The name of the file where the panic occurred.
+///   - `line`:   The line number where the panic was triggered.
+///   - `reason`: A description of the reason for the panic.
+///
+/// \details
+/// The function performs the following tasks:
+/// 1. Logs the panic details, including the file, line, and reason.
+/// 2. Displays a message to signal that the program cannot recover.
+///
+/// \note The `#[trivially_import(true)]` attribute ensures global visibility of the handler function.
+///
+/// \see include/lang/panic.hh for C++ runtime definitions.
+inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_Rv(const frame: *std::Panic::Frame) {
+    const file_path: string = (*frame).file();
+    const message:   string = (*frame).reason();
+    const line_no:   usize  = (*frame).line();
+    const eval if defined(_MSC_VER) {
+        var error_t: string = string((*((*frame).get_context())).type_name()).split(" ")[1];
+    } else {
+        var error_t: string = (*((*frame).get_context())).type_name();
+    }
+
+    error_t = std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(error_t));
+
+    const bold:        string = "\033[1m";
+    const red:         string = "\033[31m";
+    const reset:       string = "\033[0m";
+    const cyan:        string = "\033[36m";
+    const green:       string = "\033[32m";
+    const white:       string = "\033[97m";
+    const yellow:      string = "\033[33m";
+    const light_green: string = "\033[92m";
+    const light_cyan:  string = "\033[96m";
+    const light_yellow:string = "\033[93m";
+    const light_red:   string = "\033[91m";
+
+    enum FileFormat {
+        ELF,
+        PE_EXE,
+        PE_DLL,
+        MACHO,
+        ARCHIVE_UNIX,
+        LIB_COFF,
+        UNKNOWN
+    };
+
+    fn detect_format(const path: *string) -> FileFormat {
+        if !libcxx::filesystem::exists(std::string_to_nstring(*path).raw()) {
+            return FileFormat::UNKNOWN;
+        }
+
+        var f = libcxx::ifstream(std::string_to_nstring(*path).raw_string().data(), libcxx::ios::binary);
+        if !f {
+            return FileFormat::UNKNOWN;
+        }
+
+        var buf = array::<std::Legacy::char, 256>();
+
+        f.read(reinterpret_cast::<*std::Legacy::char>(buf.data()), buf.size());
+        var n = f.gcount();
+
+        if (n < 4) {
+            return FileFormat::UNKNOWN;
+        }
+
+        // ---------------- ELF ----------------
+        if (buf[0] == 0x7F && buf[1] == 'E' && buf[2] == 'L' && buf[3] == 'F') {
+            return FileFormat::ELF;
+        }
+
+        // ---------------- PE (EXE / DLL) ----------------
+        if (buf[0] == 'M' && buf[1] == 'Z') {
+            if (n < 0x40) {
+                return FileFormat::UNKNOWN; // need PE header offset
+            }
+
+            var pe_offset: u32;
+            libcxx::memcpy(&pe_offset, &buf[0x3C], sizeof(pe_offset));
+
+            f.seekg(pe_offset, libcxx::ios::beg);
+            
+            var pe_header = array::<std::Legacy::char, 24>();
+            f.read(reinterpret_cast::<*std::Legacy::char>(pe_header.data()), pe_header.size());
+            
+            if (f.gcount() >= 24 && pe_header[0] == 'P' && pe_header[1] == 'E' &&
+                pe_header[2] == 0 && pe_header[3] == 0) {
+
+                // IMAGE_FILE_HEADER at offset 4
+                var characteristics: u16;
+                libcxx::memcpy(&characteristics, &pe_header[22], sizeof(characteristics));
+
+                if (characteristics & 0x2000) {// IMAGE_FILE_DLL flag
+                    return FileFormat::PE_DLL;
+                } else {
+                    return FileFormat::PE_EXE;
+                }
+            }
+        }
+
+        // ---------------- Mach-O ----------------
+        var magic: i32 = 0;
+        libcxx::memcpy(&magic, buf.data(), sizeof(magic));
+        
+        switch (magic) {
+            case 0xFEEDFACE:
+            case 0xFEEDFACF:
+            case 0xCEFAEDFE:
+            case 0xCFFAEDFE:
+            case 0xCAFEBABE:
+            case 0xBEBAFECA {
+                return FileFormat::MACHO;
+            }
+        }
+
+        // ---------------- Unix archive (.a) ----------------
+        if (n >= 8) {
+            if (buf[0] == '!' && buf[1] == '<' && buf[2] == 'a' &&
+                buf[3] == 'r' && buf[4] == 'c' && buf[5] == 'h' &&
+                buf[6] == '>' && buf[7] == '\n') {
+                
+                return FileFormat::ARCHIVE_UNIX;
+            }
+        }
+
+        return FileFormat::UNKNOWN;
+    }
+
+    // fn read_file(const file: *string) -> string? {
+    //     var content = libcxx::ifstream(std::string_to_nstring(*file).raw(), libcxx::ios::binary);
+    
+    //     if !content {
+    //         return null;
+    //     }
+
+    //     var utf8_str = libcxx::string((libcxx::istreambuf_iterator<std::Legacy::char>(content)), libcxx::istreambuf_iterator::<std::Legacy::char>());
+        
+    //     // disable the warning for the conversion both on clang, gcc and msvc
+    //     __inline_cpp("_KAIRO_SUPPRESS_DEPRECATED_WARN_PUSH");
+
+    //     var conv: libcxx::wstring_convert::<libcxx::codecvt_utf8::<char>>;
+    //     var wide = string(conv.from_bytes(utf8_str));
+
+    //     __inline_cpp("_KAIRO_SUPPRESS_DEPRECATED_WARN_POP");
+        
+    //     if wide.length() > 0 {
+    //         return wide;
+    //     }
+
+    //     return null;
+    // }
+
+    // fn lines_in_file(const content: *string) -> usize {
+    //     var current_line: usize = 1;
+    //     var i: usize = 0;
+    //     var len: usize = (*content).length();
+
+    //     while i < len {
+    //         var ch: char = (*content)[i];
+
+    //         if ch == '\n' {
+    //             ++current_line;
+    //             ++i;
+    //         } else if ch == '\r' && (i + 1 < len) && (*content)[i + 1] == '\n' {
+    //             ++current_line;
+    //             i += 2;
+    //         } else {
+    //             ++i;
+    //         }
+    //     }
+
+    //     return current_line;
+    // }
+
+    // fn get_line(line_no: usize, const content: *string) -> string? {
+    //     var current_line: usize = 1;
+    //     var line: string;
+    //     var i: usize = 0;
+    //     var len: usize = (*content).length();
+
+    //     while i < len {
+    //         var ch: char = (*content)[i];
+
+    //         if ch == '\n' {
+    //             if current_line == line_no {
+    //                 return line;
+    //             }
+    //             line.clear();
+    //             ++current_line;
+    //             ++i;
+    //         } else if ch == '\r' && (i + 1 < len) && (*content)[i + 1] == '\n' {
+    //             if current_line == line_no {
+    //                 return line;
+    //             }
+    //             line.clear();
+    //             ++current_line;
+    //             i += 2;
+    //         } else {
+    //             line += ch;
+    //             ++i;
+    //         }
+    //     }
+
+    //     if current_line == line_no {
+    //         return line;
+    //     }
+
+    //     return null;
+    // }
+
+    /// ----------------------------------------------- ///
+    // Print the stack trace
+    print(cyan + bold + "\nStack trace " + reset + "(most recent call last):" + reset);
+
+    // format the line number to fit in a 5 character space + 1 space
+    // fn format_line_number(line_no: usize, padding: usize) -> string {
+    //     var num: string = std::to_string(line_no);
+    //     if padding <= num.length() {
+    //         return num + " ";
+    //     }
+
+    //     var pad_len: usize = padding - num.length();
+    //     var pad: string = "";
+    //     for var i: usize = 0; i < pad_len; ++i {
+    //         pad += " ";
+    //     }
+
+    //     return pad + num + " ";
+    // }
+
+    if !(frame->show_trace) {
+        print(f"{red}{bold}panic{reset}: {light_red}{bold}{error_t}{reset}({light_green}\"{message}\"{reset})");
+        // (*((*frame).get_context())).crash();
+        libcxx::abort(); // Ensure the program terminates after the panic handler is executed
+    }
+
+    var frames: *std::Stacktrace::FrameSummary = std::Stacktrace::capture();
+
+    /// also cannot forget to do std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(loc.func))
+    /// to demangle the function name and remove the kairo:: prefix
+    while frames != &null {
+        if (*frames).loc != &null {
+            var loc: std::Stacktrace::Location = *((*frames).loc);
+
+            var func_name: string = std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(loc.func));
+            var file_name: string = string(loc.file);
+            var line_num:  usize  = usize(loc.line);
+
+            var file_format: FileFormat = detect_format(&file_name);
+            var file_ext:    string     = libcxx::filesystem::path(std::string_to_nstring(file_name).raw()).extension().generic_wstring();
+            var file_type:  string;
+            switch (file_format) {
+                case FileFormat::ELF {
+                    (file_type = light_cyan + " (elf)" + reset);
+                } case FileFormat::PE_EXE {
+                    (file_type = light_cyan + " (exe)" + reset);
+                } case FileFormat::PE_DLL {
+                    (file_type = light_cyan + " (dll)" + reset);
+                } case FileFormat::MACHO {
+                    (file_type = light_cyan + " (mach-o)" + reset);
+                } case FileFormat::ARCHIVE_UNIX {
+                    (file_type = light_cyan + " (unix archive)" + reset);
+                } case FileFormat::LIB_COFF {
+                    (file_type = light_cyan + " (coff library)" + reset);
+                } case FileFormat::UNKNOWN {
+                    if file_ext == ".exe" || file_ext == ".dll" || file_ext == ".lib" {
+                        (file_type = light_cyan + " (" + file_ext.raw_string().substr(1) + ")" + reset);
+                    } else if file_ext == ".dylib" || file_ext == ".so" {
+                        (file_type = light_cyan + " (shared object)" + reset);
+                    } else if file_ext == ".a" {
+                        (file_type = light_cyan + " (unix archive)" + reset);
+                    } else {
+                        (file_type = "");
+                    }
+                }
+            };
+
+            // check the type of frame if its native theres no line number only file and function
+            if ((*frames).prev != &null) {
+                if ((*frames).kind == std::Stacktrace::FrameKind::Native) || line_num <= 0 {
+                    print(f"    {light_green}{func_name}{reset}:");
+                    print(f"      at {light_yellow}{file_name}{file_type}");
+                } else {
+                    print(f"    {light_green}{func_name}{reset}:");
+                    print(f"      at {light_yellow}{file_name}{reset}:{light_yellow}{line_num}{reset}{file_type}");
+                }
+            }
+
+            // if this frame is the panic frame, indicate it
+            // we can identify it by knowing the prev frame is null
+            if (*frames).prev == &null {
+                print(f"        panic at {light_yellow}{file_path}{reset}:{light_yellow}{line_no}{reset}");
+            }
+        }
+
+        frames = (*frames).prev;
+    }
+
+    print();
+    print(f"{red}{bold}panic{reset}: {light_red}{bold}{error_t}{reset}({light_green}\"{message}\"{reset})");
+    
+    /// ----------------------------------------------- ///
+
+    // var print_error_reading_file = fn (const file: *string, line_num: usize) {
+    //     print(bold + red + error_t + ":" + reset + white + " file could not be read " + light_green + " " + (*file) + white + ":" + yellow + std::to_string(line_num) + reset + ". Maybe the file was moved or deleted?");
+    //     print("    " + bold + red + "panic reason:" + reset + white + " " + message);
+    // };
+
+    // const question_file_content: string? = read_file(&file_path);
+
+    // if question_file_content == null {
+    //     print_error_reading_file(&file_path, line_no);
+    //     (*((*frame).get_context())).crash();
+    // }
+
+    // const file_content: string = question_file_content as string;
+    // var total_lines = lines_in_file(&file_content);
+    
+    // if line_no > total_lines {
+    //     print_error_reading_file(&file_path, line_no);
+    //     (*((*frame).get_context())).crash();
+    // }
+
+    // var line: string? = get_line(line_no, &file_content);
+
+    // if line == null {
+    //     print_error_reading_file(&file_path, line_no);
+    //     (*((*frame).get_context())).crash();
+    // }
+
+    // print(red + "panic: " + reset + yellow + error_t + reset + "(" + bold + message + reset + ")");
+    /// ----------------------------------------------- ///
+
+    (*((*frame).get_context())).crash();
+    libcxx::abort(); // Ensure the program terminates after the panic handler is executed
+}
+
+/// \section CommentedErrorReporting Example Error Reporting (Commented Section)
+///
+/// This commented-out section demonstrates how error reporting should look in from the
+///      Kairo panic handler.
+/// \example
+/// ```
+/// error: expected an '*i32' (pointer) but got an 'i32' (copy) instead
+///     --> file tests/main.kro:1:4
+///    1 | var result: i32? = divide(val1, val2);
+///      :                    ~~~~~~~^^^^~~~~~~~
+///    2 | if result? {
+///    3 |     print(f"value: {result}");
+///      |
+///
+///   fix: change the call to 'divide(&val1, val2)' to pass a pointer instead of a value.
+///
+/// note: the function definition is:
+///        --> file tests/main.kro:4:4
+///       4 | fn divide(parm1: *i32, const parm2: i32) -> i32? {
+///       5 |     if parm2 == 0:
+///       6 |         panic DivideByZero("Attempted to perform div by 0");
+///
+/// error: aborting due to previous error
+/// ```
+
+
+/*
+Stack trace (most recent call last):
+   at: start [in /usr/lib/dyld]
+   at: clang_call_terminate [in /Volumes/Development/Projects/Kairo/kairo-lang/test]
+   at: i32 test::main()
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:42]
+  42 | demo line
+   at: bool test::Core::operator==(i32)
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:19]
+  19 | demo lin
+   at: i32 test::other_foo()
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:9]
+         [panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:11]
+   9 | panic std::Error::NullValueError("This is a value error");
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+panic: kairo::std::Error::NullValueError(This is a value error)
+
+Stack trace (most recent call last):
+   at: start (in /usr/lib/dyld)
+   at: clang_call_terminate (in /Volumes/Development/Projects/Kairo/kairo-lang/test)
+   at: i32 test::main()
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:42)
+  42 | demo line
+   at: bool test::Core::operator==(i32)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:19)
+  19 | demo lin
+   at: i32 test::other_foo()
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:9)
+         (panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:11)
+   9 | panic std::Error::NullValueError("This is a value error");
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+panic: kairo::std::Error::NullValueError(This is a value error)
+
+
+*/

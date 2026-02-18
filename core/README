@@ -1,23 +1,23 @@
-helix core
+kairo core
 ==========
 
 overview
 ========
 
-the `core/` directory is the backbone of the helix runtime and language implementation. it is organized into components that enable runtime behavior, low-level functionality, and internal documentation. these components are critical for compiler and runtime correctness and should only be modified with a full understanding of their implications.
+the `core/` directory is the backbone of the kairo runtime and language implementation. it is organized into components that enable runtime behavior, low-level functionality, and internal documentation. these components are critical for compiler and runtime correctness and should only be modified with a full understanding of their implications.
 
 directory structure
 ===================
 
 the directory contains three main components:
 
-- **helix core files**:
-  - the root of `core/` contains runtime definitions written in helix.
-  - these files define fundamental runtime behavior, utilities, and compiler-assisted mechanisms that are automatically included in all helix programs.
+- **kairo core files**:
+  - the root of `core/` contains runtime definitions written in kairo.
+  - these files define fundamental runtime behavior, utilities, and compiler-assisted mechanisms that are automatically included in all kairo programs.
 
 - **include/**:
   - contains c++ source and headers implementing low-level functionality necessary for the runtime and some language features.
-  - files in this directory are not written in helix and interact directly with the host system.
+  - files in this directory are not written in kairo and interact directly with the host system.
   - these components are critical for the correctness of the compiler and runtime system.
 
 - **docs/**:
@@ -28,26 +28,26 @@ functionality
 =============
 
 - **automatic inclusion**:
-  - all helix files in `core/` are included implicitly during compilation.
-  - this ensures that runtime functionality and language mechanisms are universally available to helix programs.
+  - all kairo files in `core/` are included implicitly during compilation.
+  - this ensures that runtime functionality and language mechanisms are universally available to kairo programs.
 
 - **low-level integration**:
-  - `include/` provides c++ implementations for operations that helix itself cannot directly express, such as memory management primitives, ffi support, and certain platform abstractions.
+  - `include/` provides c++ implementations for operations that kairo itself cannot directly express, such as memory management primitives, ffi support, and certain platform abstractions.
   - the files in `include/` are as close to the hardware as possible while maintaining portability.
 
 - **hierarchical design**:
-  - the separation between helix definitions and c++ code is intentional to maintain a clean abstraction boundary.
+  - the separation between kairo definitions and c++ code is intentional to maintain a clean abstraction boundary.
   - runtime and language-level changes are confined to `core/`, while system-level changes affect `include/`.
 
 usage
 =====
 
 - **modification**:
-  - the helix runtime expects files in `core/` and `include/` to remain consistent with the compiler’s assumptions.
+  - the kairo runtime expects files in `core/` and `include/` to remain consistent with the compiler’s assumptions.
   - changes to these files can lead to unexpected runtime or compile-time behavior. do not modify them unless you are familiar with the compiler’s architecture and runtime model.
 
 - **documentation**:
-  - the `docs/` directory provides detailed references for developers maintaining or extending helix. this includes details on how runtime definitions are exposed to the compiler.
+  - the `docs/` directory provides detailed references for developers maintaining or extending kairo. this includes details on how runtime definitions are exposed to the compiler.
 
 contributing
 ============

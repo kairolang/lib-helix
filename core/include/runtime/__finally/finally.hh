@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M7FINALLY
 #define _$_HX_CORE_M7FINALLY
@@ -25,7 +25,7 @@ H_NAMESPACE_BEGIN
 
 /// \class $finally
 ///
-/// Provides "finally" semantics in Helix, allowing guaranteed execution of cleanup or other
+/// Provides "finally" semantics in Kairo, allowing guaranteed execution of cleanup or other
 /// finalization code at the end of a scope, regardless of whether an exception or error occurred.
 ///
 /// ### Purpose
@@ -36,19 +36,19 @@ H_NAMESPACE_BEGIN
 /// ### Features
 /// - Executes a specified callable at the end of the scope.
 /// - Can be used independently of `try-catch` blocks or in conjunction with them.
-/// - Acts like `defer` in other langs, but with Helix-specific integration into `finally` blocks.
+/// - Acts like `defer` in other langs, but with Kairo-specific integration into `finally` blocks.
 ///
 /// ### Usage
 /// `$finally` can be used with:
 /// 1. Standalone `finally` blocks:
-///    ```helix
+///    ```kairo
 ///    finally {
 ///        print("This always runs when the scope ends.");
 ///    }
 ///    ```
 ///
 /// 2. `try-catch-finally` constructs:
-///    ```helix
+///    ```kairo
 ///    try {
 ///        some_erroring_function();
 ///    } catch {
@@ -64,7 +64,7 @@ H_NAMESPACE_BEGIN
 ///   support for various callable types such as lambdas, function pointers, and functors.
 ///
 /// ### Example
-/// ```helix
+/// ```kairo
 /// void example() {
 ///     finally {
 ///         print("This runs when 'example' exits.");
@@ -75,7 +75,7 @@ H_NAMESPACE_BEGIN
 /// ```
 ///
 /// ### Notes
-/// - This construct is unique to Helix and designed for maximum flexibility and simplicity.
+/// - This construct is unique to Kairo and designed for maximum flexibility and simplicity.
 /// - When combined with `try-catch`, it ensures code in the `finally` block executes regardless
 ///   of whether an error occurred in the `try` block. Or can be used standalone for scope-based
 ///   cleanup.
@@ -87,7 +87,7 @@ H_NAMESPACE_BEGIN
 ///
 /// ### Limitations
 /// - `$finally` depends on `$function` for its callable implementation. Future work may involve
-///   reducing this dependency for tighter integration with the Helix runtime.
+///   reducing this dependency for tighter integration with the Kairo runtime.
 class $finally {
   public:
     $finally()                            = default;

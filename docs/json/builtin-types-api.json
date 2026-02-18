@@ -1,6 +1,6 @@
 {
-  "namespace": "helix::builtin_types",
-  "description": "Built-in primitive and container types in the Helix programming language",
+  "namespace": "kairo::builtin_types",
+  "description": "Built-in primitive and container types in the Kairo programming language",
   "primitive_types": [
     {
       "name": "string",
@@ -148,8 +148,8 @@
     },
     {
       "name": "null",
-      "description": "A static instance of helix::std::null_t type, used for null values",
-      "cpp_equivalent": "helix::std::null_t",
+      "description": "A static instance of kairo::std::null_t type, used for null values",
+      "cpp_equivalent": "kairo::std::null_t",
       "example": {
         "main": "fn main() -> void {\n    var ptr: *i32 = null;\n    \n    if (ptr == null) {\n        print(\"Pointer is null\");\n    }\n    \n    ptr = std::Legacy::new<i32>(42);\n    if (ptr != null) {\n        print(\"Pointer is not null, value:\", *ptr);\n    }\n}"
       }

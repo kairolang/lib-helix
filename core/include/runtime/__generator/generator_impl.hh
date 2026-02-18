@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M14GENERATOR_IMPL
 #define _$_HX_CORE_M14GENERATOR_IMPL
@@ -24,13 +24,13 @@ H_NAMESPACE_BEGIN
 
 /// \class $generator
 ///
-/// A core component of the Helix runtime, `$generator` provides support for generator semantics,
-/// enabling `yield` types and `yield return` statements in Helix programs. Generators are an
+/// A core component of the Kairo runtime, `$generator` provides support for generator semantics,
+/// enabling `yield` types and `yield return` statements in Kairo programs. Generators are an
 /// abstraction for managing lazily-evaluated sequences, providing an efficient and expressive way
 /// to produce and consume elements in a coroutine-based workflow.
 ///
 /// ### Overview
-/// `$generator` is implemented using C++ coroutines and integrates seamlessly with the Helix
+/// `$generator` is implemented using C++ coroutines and integrates seamlessly with the Kairo
 /// runtime. It supports the definition of functions that can produce multiple values lazily using
 /// the `yield` keyword. Generators simplify writing iterators, state machines, and other
 /// sequence-producing constructs.
@@ -59,11 +59,11 @@ H_NAMESPACE_BEGIN
 ///    - All resources used by the generator are cleaned up.
 ///
 /// ### Integration with `yield`
-/// In Helix, functions with a `yield` return type (`fn ... -> yield T;`) automatically generate a
+/// In Kairo, functions with a `yield` return type (`fn ... -> yield T;`) automatically generate a
 /// `$generator<T>` as their return type. This allows developers to use `yield` to produce values
 /// incrementally:
 ///
-/// ```helix
+/// ```kairo
 /// fn range(start: int, end: int) -> yield int {
 ///     for i in start..end {
 ///         yield i;
@@ -95,13 +95,13 @@ H_NAMESPACE_BEGIN
 /// #### `next($generator<T> &gen)`
 /// - Retrieves the next value from the generator.
 /// - Automatically resumes the coroutine and fetches the current value:
-///   ```helix
+///   ```kairo
 ///   let g = range(1, 5);
 ///   print(next(g)); // Output: 1
 ///   ```
 ///
 /// ### Example Usage
-/// ```helix
+/// ```kairo
 /// fn some_generator(start: int, end: int) -> yield int {
 ///     for i in start..end {
 ///         yield i;
@@ -115,12 +115,12 @@ H_NAMESPACE_BEGIN
 /// ```
 ///
 /// ### Notes
-/// - `$generator` is a Helix runtime feature and is part of the standard library.
+/// - `$generator` is a Kairo runtime feature and is part of the standard library.
 /// - The implementation currently relies on `libc++` and may be subject to refactoring to remove
 ///   external dependencies in future versions.
 ///
 /// ### Related Concepts
-/// - `yield`: Used in Helix to produce values in generator functions.
+/// - `yield`: Used in Kairo to produce values in generator functions.
 /// - `Iter`: The iterator class for navigating generator results.
 template <libcxx::movable T>
 class $generator {

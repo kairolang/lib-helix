@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,25 +9,25 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///------------------------------------------------------------------------------------ Helix ---///
+///------------------------------------------------------------------------------------ Kairo ---///
 
-#ifndef __$LIBHELIX_CONFIG__
-#define __$LIBHELIX_CONFIG__
+#ifndef __$LIBKAIRO_CONFIG__
+#define __$LIBKAIRO_CONFIG__
 
 namespace std {}  // namespace std
 
 #if __cplusplus < 202002L
-#error "C++20 or higher is required to use Helix."
+#error "C++20 or higher is required to use Kairo."
 #endif
 
-const long LIBHELIX_VERSION_FULL  = (25 << 16) | (4 << 8) | (15);
-const long LIBHELIX_MAJOR_VERSION = (LIBHELIX_VERSION_FULL >> 16) & 0xFF;
-const long LIBHELIX_MINOR_VERSION = (LIBHELIX_VERSION_FULL >> 8) & 0xFF;
-const long LIBHELIX_PATCH_VERSION = (LIBHELIX_VERSION_FULL) & 0xFF;
+const long LIBKAIRO_VERSION_FULL  = (25 << 16) | (4 << 8) | (15);
+const long LIBKAIRO_MAJOR_VERSION = (LIBKAIRO_VERSION_FULL >> 16) & 0xFF;
+const long LIBKAIRO_MINOR_VERSION = (LIBKAIRO_VERSION_FULL >> 8) & 0xFF;
+const long LIBKAIRO_PATCH_VERSION = (LIBKAIRO_VERSION_FULL) & 0xFF;
 
-constexpr long LIBHELIX_STANDARD = LIBHELIX_MAJOR_VERSION;
+constexpr long LIBKAIRO_STANDARD = LIBKAIRO_MAJOR_VERSION;
 
 #ifndef _LIBCPP_NODEBUG
 #define _LIBCPP_NODEBUG
@@ -37,8 +37,8 @@ constexpr long LIBHELIX_STANDARD = LIBHELIX_MAJOR_VERSION;
 #define _LIBCPP_HIDE_FROM_ABI
 #endif
 
-#ifndef _LIBHELIX_HIDE_FROM_ABI
-#define _LIBHELIX_HIDE_FROM_ABI
+#ifndef _LIBKAIRO_HIDE_FROM_ABI
+#define _LIBKAIRO_HIDE_FROM_ABI
 #endif
 
 #ifndef _LIBCPP_TEMPLATE_VIS
@@ -53,23 +53,23 @@ constexpr long LIBHELIX_STANDARD = LIBHELIX_MAJOR_VERSION;
 #define _NEW(x) new x
 #endif
 
-namespace helix {
+namespace kairo {
 namespace libcxx = ::std;
 }
 
-#define H_NAMESPACE_BEGIN namespace helix {
+#define H_NAMESPACE_BEGIN namespace kairo {
 #define H_NAMESPACE_END }
 #define H_STD_NAMESPACE_BEGIN namespace std {
 #define H_STD_NAMESPACE_END }
-#define H_STD_NAMESPACE helix::std
-#define H_NAMESPACE helix
+#define H_STD_NAMESPACE kairo::std
+#define H_NAMESPACE kairo
 #define LIBCXX_NAMESPACE libcxx
 #define LIBC_NAMESPACE libc
 
 // muted yellow color
 #define DEBUG_PRINT(...) print("\033[33m", __VA_ARGS__, "\033[0m")
 
-#define HELIX_FORCE_INLINE [[gnu::always_inline]] inline
+#define KAIRO_FORCE_INLINE [[gnu::always_inline]] inline
 
 #if !defined(__has_builtin)
 #   define __has_builtin(x) 0
@@ -94,28 +94,28 @@ namespace libcxx = ::std;
 #endif
 
 #if defined(__clang__) || defined(__GNUC__)
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_PUSH \
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_PUSH \
     _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_POP _Pragma("GCC diagnostic pop")
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_POP _Pragma("GCC diagnostic pop")
 #elif defined(_MSC_VER)
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_PUSH \
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_PUSH \
         __pragma(warning(push)) __pragma(warning(disable : 4996)) __pragma(warning(disable : 4995))
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_POP __pragma(warning(pop))
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_POP __pragma(warning(pop))
 #else
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_PUSH
-#   define _HELIX_SUPPRESS_DEPRECATED_WARN_POP
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_PUSH
+#   define _KAIRO_SUPPRESS_DEPRECATED_WARN_POP
 #endif
 
 #if defined(__clang__) || defined(__GNUC__)
-#   define _HELIX_SUPPRESS_UNREACHABLE_WARN_PUSH \
+#   define _KAIRO_SUPPRESS_UNREACHABLE_WARN_PUSH \
     _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wunreachable-code\"")
-#define _HELIX_SUPPRESS_UNREACHABLE_WARN_POP _Pragma("GCC diagnostic pop")
+#define _KAIRO_SUPPRESS_UNREACHABLE_WARN_POP _Pragma("GCC diagnostic pop")
 #elif defined(_MSC_VER)
-#   define _HELIX_SUPPRESS_UNREACHABLE_WARN_PUSH __pragma(warning(push)) __pragma(warning(disable : 4702))
-#   define _HELIX_SUPPRESS_UNREACHABLE_WARN_POP __pragma(warning(pop))
+#   define _KAIRO_SUPPRESS_UNREACHABLE_WARN_PUSH __pragma(warning(push)) __pragma(warning(disable : 4702))
+#   define _KAIRO_SUPPRESS_UNREACHABLE_WARN_POP __pragma(warning(pop))
 #else
-#   define _HELIX_SUPPRESS_UNREACHABLE_WARN_PUSH
-#   define _HELIX_SUPPRESS_UNREACHABLE_WARN_POP
+#   define _KAIRO_SUPPRESS_UNREACHABLE_WARN_PUSH
+#   define _KAIRO_SUPPRESS_UNREACHABLE_WARN_POP
 #endif
 
 #endif

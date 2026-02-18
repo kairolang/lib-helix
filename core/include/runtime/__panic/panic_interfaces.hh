@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M16PANIC_INTERFACES
 #define _$_HX_CORE_M16PANIC_INTERFACES
@@ -30,9 +30,9 @@ namespace Panic {
 /// event.
 ///
 /// ### Purpose
-/// The `Frame` class represents the core structure for managing panic states in Helix.
+/// The `Frame` class represents the core structure for managing panic states in Kairo.
 /// It tracks error details such as the file, line number, and error reason, and interacts with
-/// Helix's panic-handling system.
+/// Kairo's panic-handling system.
 ///
 /// ### Usage
 /// This forward declaration allows other components, such as `Panic` utilities and handlers,
@@ -41,7 +41,7 @@ namespace Panic {
 /// ### Related
 /// - See the full definition of `Panic::Frame` for detailed documentation.
 /// - Used in conjunction with `Panicking` interfaces and
-/// `HX_FN_Vi_Q5_13_helixpanic_handler_Q3_5_5_stdPanicFrame_C_PK_Rv`.
+/// `HX_FN_Vi_Q5_13_kairopanic_handler_Q3_5_5_stdPanicFrame_C_PK_Rv`.
 class Frame;
 
 namespace Interface {

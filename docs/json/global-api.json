@@ -1,6 +1,6 @@
 {
   "namespace": "global",
-  "description": "Global functions and macros available throughout the Helix language",
+  "description": "Global functions and macros available throughout the Kairo language",
   "macros": [
     {
       "name": "reference(T)",
@@ -28,7 +28,7 @@
       "signature": "print(...args) -> void",
       "variadic": true,
       "example": {
-        "main": "fn main() -> void {\n    print(\"Hello, World!\");\n    print(\"Number:\", 42);\n    print(\"Multiple values:\", 1, 2.5, \"text\", true);\n    \n    // Using custom endlines\n    print(\"Line 1\", std::endl(\"\\n\"));\n    print(\"Line 2\", std::endl(\"\\r\\n\"));\n    \n    // Mixed types\n    var name: string = \"Helix\";\n    var version: f32 = 1.0;\n    print(\"Welcome to\", name, \"version\", version);\n}"
+        "main": "fn main() -> void {\n    print(\"Hello, World!\");\n    print(\"Number:\", 42);\n    print(\"Multiple values:\", 1, 2.5, \"text\", true);\n    \n    // Using custom endlines\n    print(\"Line 1\", std::endl(\"\\n\"));\n    print(\"Line 2\", std::endl(\"\\r\\n\"));\n    \n    // Mixed types\n    var name: string = \"Kairo\";\n    var version: f32 = 1.0;\n    print(\"Welcome to\", name, \"version\", version);\n}"
       }
     }
   ]

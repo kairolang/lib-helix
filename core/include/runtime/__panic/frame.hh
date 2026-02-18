@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M5FRAME
 #define _$_HX_CORE_M5FRAME
@@ -31,7 +31,7 @@ H_STD_NAMESPACE_BEGIN
 namespace Panic {
 /// \class Frame
 ///
-/// `Frame` is a core component of Helix's panic-handling system, encapsulating the details
+/// `Frame` is a core component of Kairo's panic-handling system, encapsulating the details
 /// of an error state (panic). It is designed to store critical information about the panic,
 /// such as the reason, file, and line number, and propagate the error through the system.
 ///
@@ -43,7 +43,7 @@ namespace Panic {
 ///   provided type supports static or instance-level panic methods and invokes them
 ///   accordingly.
 /// - **Type Constraints**: The `Frame` class enforces strong constraints on the provided type.
-///   It ensures that the type is either copy or move constructible and implements the Helix
+///   It ensures that the type is either copy or move constructible and implements the Kairo
 ///   panic interface (`Panicking` concept).
 ///
 /// ### Responsibilities
@@ -55,9 +55,9 @@ namespace Panic {
 /// - Propagate the panic by invoking a panic handler and throwing the managed object.
 ///
 /// ### Constructor Use
-/// This class is typically constructed using the `panic` keyword in Helix:
-/// ```helix
-/// panic std::Panic::Frame(std::Error::RuntimeError(), "yes.hlx", 12);
+/// This class is typically constructed using the `panic` keyword in Kairo:
+/// ```kairo
+/// panic std::Panic::Frame(std::Error::RuntimeError(), "yes.kro", 12);
 /// ```
 /// The `Frame` class can also be extracted into a variable and then passed to the `panic`
 /// system. These are the only valid ways to create and utilize `Frame` objects.
@@ -76,7 +76,7 @@ namespace Panic {
 /// ### Example Usage
 /// ```cpp
 /// // Triggering a panic with a custom error
-/// Frame frame(std::Error::RuntimeError("Some error occurred"), "example.hlx", 42);
+/// Frame frame(std::Error::RuntimeError("Some error occurred"), "example.kro", 42);
 /// frame.operator$panic();
 /// ```
 ///

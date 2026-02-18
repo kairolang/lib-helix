@@ -1,0 +1,56 @@
+/// Constructor with format string and position information
+///                                                                                              ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
+///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
+///   were made.                                                                                 ///
+///                                                                                              ///
+///   For more information on the license terms and requirements, please visit:                  ///
+///     https://creativecommons.org/licenses/by/4.0/                                             ///
+///                                                                                              ///
+///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
+///                                                                                              ///
+///-------------------------------------------------------------------------------- lib-helix ---///
+
+/// Error related to string formatting operations
+default class FormatError derives std::Error::BaseError {
+    priv var msg: string;
+
+    /// Constructor with a custom error message
+    fn FormatError(self, msg: string) {
+        self.msg = std::Memory::move(msg);
+    }
+    
+    fn FormatError(self, format: string, position: u32) {
+        // build the snippet with a "->" at the error point
+        var snippet: string = format;
+
+        if position < format.length() {
+            var prefix = format.substring(0, position) if position > 0  else "";
+            var chr    = format.substring(position, position + 1);
+            var suffix = format.substring(position + 1) if position < format.length() - 1 else "";
+            
+            snippet = f"{prefix}-> {chr}{suffix}";
+        }
+
+        // now use a single f-string for the full message
+        self.msg = f"Invalid format at position {position}: \'{snippet}\'";
+    }
+    
+    /// Default constructor
+    default fn FormatError(self);
+
+    /// Virtual destructor
+    override default fn op delete (self);
+    
+    /// Get a string representation for panic
+    override const fn op panic (self) -> string {
+        return self.msg;
+    }
+    
+    /// Convert the error to a string
+    override const fn op as (self) -> string {
+        return self.msg;
+    }
+}

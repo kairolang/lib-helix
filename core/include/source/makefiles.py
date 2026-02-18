@@ -15,7 +15,7 @@ for file in tpp_files:
     # Find the end of the block comment
     insert_idx = 0
     for i, line in enumerate(lines):
-        if "Lib-Helix" in line:
+        if "lib-helix" in line:
             insert_idx = i + 1
             break
 

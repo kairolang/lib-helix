@@ -1,19 +1,19 @@
-# This file contains everything contained in the helix std
+# This file contains everything contained in the kairo std
 
 # std files
-## std/system.hlx
-## std/file_system.hlx
-## std/bit.hlx
-## std/input.hlx
-## std/stream.hlx
-## std/any.hlx
-## std/meta.hlx
-## std/flat_map.hlx
-## std/debug.hlx
+## std/system.kro
+## std/file_system.kro
+## std/bit.kro
+## std/input.kro
+## std/stream.kro
+## std/any.kro
+## std/meta.kro
+## std/flat_map.kro
+## std/debug.kro
 ###  - `class Frame`
 #### - `
 ### - `type TraceFrames = vector<std::debug::Frame>`
 ### - `std::debug::breakpoint()`
 ### - `std::debug::backtrace()  -> std::debug::TraceFrames`
 ### - `std::debug::is_enabled() -> bool`
-## std/interfaces.hlx
+## std/interfaces.kro

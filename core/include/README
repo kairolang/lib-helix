@@ -1,38 +1,38 @@
-helix core/include
+kairo core/include
 =================
 
 overview
 ========
 
-the `core/include` directory is a critical component of the helix project, containing all the `.h` files that define the c++ core of the helix runtime. these files provide the foundational c++ definitions required to support the helix compiler and runtime system.
+the `core/include` directory is a critical component of the kairo project, containing all the `.h` files that define the c++ core of the kairo runtime. these files provide the foundational c++ definitions required to support the kairo compiler and runtime system.
 
-this directory acts as the bridge between the helix language and its underlying c++ implementation, ensuring seamless integration and high performance.
+this directory acts as the bridge between the kairo language and its underlying c++ implementation, ensuring seamless integration and high performance.
 
 purpose and functionality
 =========================
 
 - **c++ core definitions**:
-  - this directory contains all the header files defining the core functionality of the helix runtime in c++.
+  - this directory contains all the header files defining the core functionality of the kairo runtime in c++.
   - these definitions are essential for the compiler and runtime to function correctly.
 
 - **compiler dependency**:
-  - the helix compiler relies on the definitions in this directory to translate helix code into executable binaries.
+  - the kairo compiler relies on the definitions in this directory to translate kairo code into executable binaries.
 
 - **seamless integration**:
-  - the header files in this directory are tightly integrated with the helix compiler and runtime, providing a robust and efficient foundation for all helix programs.
+  - the header files in this directory are tightly integrated with the kairo compiler and runtime, providing a robust and efficient foundation for all kairo programs.
 
 usage
 =====
 
 - **do not modify without expertise**:
-  - modifying files in this directory requires an in-depth understanding of both the helix runtime and the underlying c++ implementation.
+  - modifying files in this directory requires an in-depth understanding of both the kairo runtime and the underlying c++ implementation.
   - improper changes can result in compiler or runtime failures.
 
 - **automatic inclusion**:
-  - the files in `core/include` are automatically included by the helix compiler during the build process.
+  - the files in `core/include` are automatically included by the kairo compiler during the build process.
 
 - **license information**:
-  - files in this directory are part of the helix project and are distributed under the attribution 4.0 international license (cc by 4.0).
+  - files in this directory are part of the kairo project and are distributed under the attribution 4.0 international license (cc by 4.0).
   - you are free to use, modify, and redistribute these files, even for commercial purposes, provided proper credit is given and changes are noted.
 
   for more details on the license, visit: [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
@@ -44,11 +44,11 @@ warning
 =======
 
 - **critical directory**:
-  - this directory and its files are essential for the helix runtime and compiler.
-  - do not remove or ignore this directory when configuring or building the helix project.
+  - this directory and its files are essential for the kairo runtime and compiler.
+  - do not remove or ignore this directory when configuring or building the kairo project.
 
 license
 =======
 
-this directory is part of the helix project, under the attribution 4.0 international license (cc by 4.0).
-copyright (c) 2024 the helix project (cc by 4.0).
+this directory is part of the kairo project, under the attribution 4.0 international license (cc by 4.0).
+copyright (c) 2024 the kairo project (cc by 4.0).

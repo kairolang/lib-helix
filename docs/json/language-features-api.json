@@ -1,6 +1,6 @@
 {
-  "namespace": "helix::language_features",
-  "description": "Core language features and syntax elements of the Helix programming language",
+  "namespace": "kairo::language_features",
+  "description": "Core language features and syntax elements of the Kairo programming language",
   "language_features": [
     {
       "name": "finally block",

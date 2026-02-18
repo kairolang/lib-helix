@@ -1,0 +1,41 @@
+///--- The Kairo Project ------------------------------------------------------------------------///
+///                                                                                              ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
+///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
+///   were made.                                                                                 ///
+///                                                                                              ///
+///   For more information on the license terms and requirements, please visit:                  ///
+///     https://creativecommons.org/licenses/by/4.0/                                             ///
+///                                                                                              ///
+///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
+///                                                                                              ///
+///-------------------------------------------------------------------------------- lib-helix ---///
+
+/// Error that occurs when a race condition is detected
+default class RaceConditionError derives std::Error::ConcurrencyError {
+    /// Constructor with resource information
+    fn RaceConditionError(self, resource_name: string) {
+        super.ConcurrencyError(std::String::format("Race condition detected on resource: '{}'", resource_name));
+    }
+    
+    /// Constructor with detailed information
+    fn RaceConditionError(self, resource_name: string, thread1: u64, thread2: u64) {
+        super.ConcurrencyError(std::String::format("Race condition detected on resource '{}' between threads {} and {}", 
+                                                 resource_name, thread1, thread2));
+    }
+    
+    /// Constructor with custom message
+    fn RaceConditionError(self, msg: string) {
+        super.ConcurrencyError(msg);
+    }
+    
+    /// Default constructor
+    fn RaceConditionError(self) {
+        super.ConcurrencyError("Race condition detected");
+    }
+
+    /// Virtual destructor
+    override default fn op delete (self);
+}

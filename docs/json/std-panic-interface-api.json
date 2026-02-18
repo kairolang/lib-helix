@@ -1,6 +1,6 @@
 {
   "namespace": "std::Panic::Interface",
-  "description": "Interface definitions for panic-capable types in the Helix language",
+  "description": "Interface definitions for panic-capable types in the Kairo language",
   "interfaces": [
     {
       "name": "Panicking<T>",

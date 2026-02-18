@@ -139,7 +139,7 @@
 ## std::Interfaces::*
 - SupportsPointerCast::<T> - dynamic cast requirement
 - Castable::<From, To> - has `op as` operator or C++ implicit cast operator
-- ConvertibleToString::<T> - has `fn op as (self) -> string` operator or supports C++ Ostream insertion or C++ implicit conversion to helix::`string`
+- ConvertibleToString::<T> - has `fn op as (self) -> string` operator or supports C++ Ostream insertion or C++ implicit conversion to kairo::`string`
 - RangeCompliant::<T> - has `op ++` and `op <` operators for range iteration
 - SupportsOStream::<T> - has `op <<` operator for output streaming or c++ Ostream insertion operator that returns `libcxx::ostream&`
 - ClassType::<T> - must be a class type
@@ -201,7 +201,7 @@
 - TypeErasure - a type erasure mechanism that allows for type removel has the follwing methods: destroy() -> void, defrefence operator -> *void, type_info() -> libcxx::type_info, clone() -> *TypeErasure
 - erase_type::<T>(_: *T) -> *TypeErasure - erases the type of an object and returns a TypeErasure object
 - Range::<T> - represents a range of values of type `T`, has the following methods:
-    ```helix
+    ```kairo
     fn Range(self, first: T, last: T, step: isize = 1)
     fn Range(self, last: T)
     fn op in (self)[iter] -> yield T
@@ -290,7 +290,7 @@
                 (!std::Interface::Castable<std::Meta::all_extents_removed<Ty>, string>)
     inline string to_string(Ty &&t);
 - inline char char_to_cchar(wchar_t wc) - converts a wide character to a char (c-char)
-- inline string nstring_to_string(const nstring &cstr) - converts a nstring to a string (nstring being helix::String::basic<char> - c++ char not wchar_t)
+- inline string nstring_to_string(const nstring &cstr) - converts a nstring to a string (nstring being kairo::String::basic<char> - c++ char not wchar_t)
 - inline string nptr_to_string(const char *cstr, size_t size)
 - inline nstring string_to_nstring(const string &wstr)
 - inline void wptr_to_nptr(const wchar_t *wstr, char *buffer, size_t buffer_size)
@@ -593,7 +593,7 @@
     [[nodiscard]] string        reason() const;
     [[nodiscard]] FrameContext *get_context() const;
 
-    [[noreturn]] void operator$panic() const; // used in helix code as `panic ...` <...> would be the object that contains a operator `panic`
+    [[noreturn]] void operator$panic() const; // used in kairo code as `panic ...` <...> would be the object that contains a operator `panic`
     // panic operator can be defiend by implementing `fn op panic(self) -> Frame`
     ```
 
@@ -611,7 +611,7 @@
 - new::<T>(...args) - allocates memory for a type and calls its constructor with the specified arguments (equivalent to `new T(args...)`)
 
 ## std::Error::*
-- BaseError - Base Class for all Helix errors (must implement `op as` and `op panic` operators aside from constructors)
+- BaseError - Base Class for all Kairo errors (must implement `op as` and `op panic` operators aside from constructors)
 - NullValueError
 - RuntimeError
 - StateMismatchError
@@ -642,7 +642,7 @@
 - `f32` - `float`
 - `f64` - `double`
 - `f80` - `long double`
-- `null` - a static instance of `helix::std::null_t` type, used for null values
+- `null` - a static instance of `kairo::std::null_t` type, used for null values
 - `vec::<T>` - represents a dynamic array type, alias for `std::vector<T>`
 - `map::<Key, Value, Compare = libcxx::less::<Key>, Alloc = libcxx::allocator::<std::pair::<const Key, Value>>>` - represents a map type, alias for `std::map<Key, Value, Compare, Alloc>`
 - `array::<T, N>` - represents a fixed-size array type, equivalent to `std::array<T, N>`

@@ -1,6 +1,6 @@
 {
   "namespace": "std::Memory",
-  "description": "Memory management utilities and operations for the Helix language",
+  "description": "Memory management utilities and operations for the Kairo language",
   "enums": [
     {
       "name": "AddressType",

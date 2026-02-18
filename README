@@ -1,13 +1,13 @@
-libhelix
+lib-helix
 ========
 
 
 overview
 ========
 
-`libhelix` is the standard library for the helix programming language, designed to provide essential functionality and utilities for building robust applications in helix. this library serves as both a functional foundation and a reference point for developers working with the helix language.
+`lib-helix` is the standard library for the kairo programming language, designed to provide essential functionality and utilities for building robust applications in kairo. this library serves as both a functional foundation and a reference point for developers working with the kairo language.
 
-written primarily in helix, `libhelix` encapsulates core capabilities and integrates seamlessly with helix-based projects. additionally, it includes unit tests and comprehensive documentation in mdx format, ensuring reliability and ease of use.
+written primarily in kairo, `lib-helix` encapsulates core capabilities and integrates seamlessly with kairo-based projects. additionally, it includes unit tests and comprehensive documentation in mdx format, ensuring reliability and ease of use.
 
 
 directory structure
@@ -15,13 +15,13 @@ directory structure
 
 the library is organized into the following directories:
 
-- `docs`: contains the mdx documentation files for the standard library. use these as a reference for understanding and leveraging helix's capabilities.
+- `docs`: contains the mdx documentation files for the standard library. use these as a reference for understanding and leveraging kairo's capabilities.
 
-- `pkgs`: houses the helix standard library functions. this is the core of `libhelix` and contains the implementations of various utilities and features.
+- `pkgs`: houses the kairo standard library functions. this is the core of `lib-helix` and contains the implementations of various utilities and features.
 
 - `scripts`: includes utility scripts such as the test runner (`test.py`) and other tools to streamline development and debugging.
 
-- `libs`: contains c++ headers that are used internally to extend helix's functionality. these are not part of the public api and are used to overcome current limitations in helix's feature set.
+- `libs`: contains c++ headers that are used internally to extend kairo's functionality. these are not part of the public api and are used to overcome current limitations in kairo's feature set.
 
 
 running tests
@@ -50,4 +50,4 @@ this project is licensed under the creative commons attribution 4.0 internationa
 Acknowledgments
 ===============
 
-`libhelix` is a collaborative effort by the helix development community. special thanks to all contributors who help make this library robust, reliable, and easy to use.
+`lib-helix` is a collaborative effort by the kairo development community. special thanks to all contributors who help make this library robust, reliable, and easy to use.

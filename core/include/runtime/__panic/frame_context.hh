@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,9 +9,9 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M13FRAME_CONTEXT
 #define _$_HX_CORE_M13FRAME_CONTEXT
@@ -27,14 +27,14 @@ H_STD_NAMESPACE_BEGIN
 namespace Panic {
 /// \class FrameContext
 ///
-/// `FrameContext` is a core component of the Helix language's panic handling system.
+/// `FrameContext` is a core component of the Kairo language's panic handling system.
 /// It provides dynamic management for objects, integrating type-erasure techniques
 /// with panic handling and exception propagation.
 ///
 /// ### Design Details
 /// - **Dynamic Management**: Stores objects of arbitrary types using the `TypeErasure`
 ///   interface, allowing for flexible and type-safe storage.
-/// - **Panic Integration**: Supports Helix's panic system by associating objects
+/// - **Panic Integration**: Supports Kairo's panic system by associating objects
 ///   with panic messages and enabling their propagation as exceptions.
 /// - **Safe Cleanup**: Ensures all managed objects are properly destroyed when
 ///   the `FrameContext` is destructed or reassigned.
@@ -44,21 +44,21 @@ namespace Panic {
 /// - Facilitate panic handling and exception throwing for managed objects.
 /// - Provide interfaces for cloning, comparison, and access to the stored object.
 ///
-/// ### Usage in Helix
-/// `FrameContext` is typically used within Helix's panic handling system. When a
+/// ### Usage in Kairo
+/// `FrameContext` is typically used within Kairo's panic handling system. When a
 /// panic occurs, `FrameContext` manages the offending object, ensuring it is
 /// correctly propagated and destroyed.
 ///
 /// ### Key Features
 /// - **Type Erasure**: Uses `TypeErasure` to manage objects of arbitrary types.
 /// - **Panic Propagation**: Supports throwing the managed object as an exception
-///   using the Helix panic mechanism.
+///   using the Kairo panic mechanism.
 /// - **Lifecycle Management**: Ensures proper cleanup of objects, preventing memory
 ///   leaks and undefined behavior.
 ///
 /// ### Implementation Notes
 /// - The constructor accepts any object type that satisfies the constraints
-///   defined by Helix's `Panicking` concept.
+///   defined by Kairo's `Panicking` concept.
 /// - The `crash()` method propagates the managed object as an exception, terminating
 ///   the current context.
 /// - Copy and move constructors ensure the `FrameContext` can be safely duplicated

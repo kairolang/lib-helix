@@ -1,6 +1,6 @@
 {
   "namespace": "std",
-  "description": "Core standard library functions and types for the Helix language",
+  "description": "Core standard library functions and types for the Kairo language",
   "functions": [
     {
       "name": "as_cast<To, From>",
@@ -53,7 +53,7 @@
       "description": "Formats a string using the specified format and arguments, similar to printf in C",
       "signature": "stringf(format: string, ...args) -> string",
       "example": {
-        "main": "fn main() -> void {\n    var name: string = \"Helix\";\n    var version: i32 = 1;\n    var formatted: string = std::stringf(\"Welcome to %s version %d\", name, version);\n    print(formatted);\n}"
+        "main": "fn main() -> void {\n    var name: string = \"Kairo\";\n    var version: i32 = 1;\n    var formatted: string = std::stringf(\"Welcome to %s version %d\", name, version);\n    print(formatted);\n}"
       }
     },
     {
@@ -117,7 +117,7 @@
     },
     {
       "name": "nstring_to_string",
-      "description": "Converts a nstring to a string (nstring being helix::String::basic<char>)",
+      "description": "Converts a nstring to a string (nstring being kairo::String::basic<char>)",
       "signature": "nstring_to_string(cstr: const nstring&) -> string",
       "specifiers": ["inline"],
       "example": {
@@ -164,7 +164,7 @@
     {
       "name": "Generator<YieldType>",
       "description": "Represents a generator type that yields values of the specified type, C++ coroutines are used in the implementation",
-      "note": "In Helix syntax, use 'yield T' which becomes Generator<T>",
+      "note": "In Kairo syntax, use 'yield T' which becomes Generator<T>",
       "example": {
         "main": "fn main() -> void {\n    fn fibonacci() -> yield i32 {\n        var a: i32 = 0;\n        var b: i32 = 1;\n        while (true) {\n            yield a;\n            var temp: i32 = a + b;\n            a = b;\n            b = temp;\n        }\n    }\n    var gen: Generator<i32> = fibonacci();\n    print(std::next(gen));\n    print(std::next(gen));\n}"
       }
@@ -273,7 +273,7 @@
     {
       "name": "Questionable<T>",
       "description": "Represents a type that can be nullable or panicable",
-      "note": "In Helix syntax, use 'T?' which becomes Questionable<T>",
+      "note": "In Kairo syntax, use 'T?' which becomes Questionable<T>",
       "constructors": [
         {
           "name": "Questionable",

@@ -1,6 +1,6 @@
-///--- The Helix Project ------------------------------------------------------------------------///
+///--- The Kairo Project ------------------------------------------------------------------------///
 ///                                                                                              ///
-///   Part of the Helix Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
+///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
 ///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
 ///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
 ///   were made.                                                                                 ///
@@ -9,16 +9,16 @@
 ///     https://creativecommons.org/licenses/by/4.0/                                             ///
 ///                                                                                              ///
 ///   SPDX-License-Identifier: CC-BY-4.0                                                         ///
-///   Copyright (c) 2024 The Helix Project (CC BY 4.0)                                           ///
+///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
 ///                                                                                              ///
-///-------------------------------------------------------------------------------- Lib-Helix ---///
+///-------------------------------------------------------------------------------- lib-helix ---///
 
 #ifndef _$_HX_CORE_M12PANIC_CONFIG
 #define _$_HX_CORE_M12PANIC_CONFIG
 
 /// \def _HX_MC_Q7_INTERNAL_CRASH_PANIC_M
 ///
-/// A macro for triggering an immediate and unrecoverable panic within the Helix runtime.
+/// A macro for triggering an immediate and unrecoverable panic within the Kairo runtime.
 ///
 /// ### Purpose
 /// This macro is designed to:
@@ -30,7 +30,7 @@
 /// ### Behavior
 /// - Constructs a `Panic::Frame` using the provided error and contextual information (`__FILE__`,
 /// `__LINE__`).
-/// - Calls `operator$panic` on the constructed frame, invoking the Helix panic handler and throwing
+/// - Calls `operator$panic` on the constructed frame, invoking the Kairo panic handler and throwing
 /// the managed error object.
 ///
 /// ### Example Usage
@@ -46,7 +46,7 @@
 /// - Should be used in critical failure paths where recovery is not possible.
 #ifndef _HX_MC_Q7_INTERNAL_CRASH_PANIC_M
 #define _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(err) \
-    ::helix::std::Panic::Frame(err, __FILE__, __LINE__).operator$panic();
+    ::kairo::std::Panic::Frame(err, __FILE__, __LINE__).operator$panic();
 #endif
 
 /// \def $panic
@@ -56,7 +56,7 @@
 ///
 /// ### Purpose
 /// This macro simplifies the creation and return of a `Panic::Frame` object, embedding the provided
-/// error along with the current file and line number. It integrates seamlessly into Helix's
+/// error along with the current file and line number. It integrates seamlessly into Kairo's
 /// panic-handling mechanism.
 ///
 /// ### Behavior
@@ -77,7 +77,7 @@
 /// - It does not invoke the panic operator directly, allowing the caller to determine the next
 /// course of action.
 #ifndef _HX_MC_Q7_PANIC_M
-#define _HX_MC_Q7_PANIC_M(err) return ::helix::std::Panic::Frame(err, __FILE__, __LINE__);
+#define _HX_MC_Q7_PANIC_M(err) return ::kairo::std::Panic::Frame(err, __FILE__, __LINE__);
 #endif
 
 #endif  // _$_HX_CORE_M12PANIC_CONFIG

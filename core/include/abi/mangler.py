@@ -1,9 +1,9 @@
 import re
 
-class HelixMangler:
+class KairoMangler:
     def mangle(self, entity_type: str, name: str, parameters: list = None, qualifiers: list = None) -> str:
         """
-        Mangles a Helix entity according to the Helix ABI specification.
+        Mangles a Kairo entity according to the Kairo ABI specification.
         
         :param entity_type: The type of entity (e.g., FN, RM, VT, TI, NV, CT, DT, OP, LM).
         :param name: The name of the entity, including namespaces or modules if applicable.
@@ -27,7 +27,7 @@ class HelixMangler:
 
     def encode_type(self, param: str) -> str:
         """
-        Encodes a type according to the Helix ABI type encoding scheme.
+        Encodes a type according to the Kairo ABI type encoding scheme.
         """
         type_map = {
             'void': '_v', 'bool': '_b',
@@ -38,13 +38,13 @@ class HelixMangler:
         }
         return type_map.get(param, f"_{param}")
 
-class HelixDemangler:
+class KairoDemangler:
     def demangle(self, mangled_name: str) -> str:
         """
-        Demangles a Helix entity name according to the Helix ABI specification.
+        Demangles a Kairo entity name according to the Kairo ABI specification.
         """
         if not mangled_name.startswith("_HX_"):
-            return "Invalid Helix mangled name"
+            return "Invalid Kairo mangled name"
 
         entity_type_map = {
             'FN': 'Function', 'RM': 'Requires',
@@ -70,7 +70,7 @@ class HelixDemangler:
         pattern = r"_HX_(\w{2})(\d+)([a-zA-Z_]+)(.*)"
         match = re.match(pattern, mangled_name)
         if not match:
-            return "Invalid Helix mangled name"
+            return "Invalid Kairo mangled name"
 
         entity_type_code, length, name, remainder = match.groups()
         entity_type = entity_type_map.get(entity_type_code, "UnknownEntity")
@@ -106,8 +106,8 @@ class HelixDemangler:
         return demangled
 
 # Example usage
-mangler = HelixMangler()
-demangler = HelixDemangler()
+mangler = KairoMangler()
+demangler = KairoDemangler()
 
 mangled_name = mangler.mangle('FN', 'add', ['i32', 'i32'], ['_C'])
 demangled_name = demangler.demangle(mangled_name)

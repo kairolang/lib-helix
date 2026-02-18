@@ -1,7 +1,7 @@
 -- Project setup
 set_project("core")
 set_version("0.0.1-alpha+5932a", {soname = false})
-set_description("Helix Core Lib")
+set_description("Kairo Core Lib")
 add_rules("mode.debug", "mode.release")
 
 -- ABI and runtime detection

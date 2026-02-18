@@ -1,10 +1,10 @@
 {
   "namespace": "std::Error",
-  "description": "Standard error types for the Helix language",
+  "description": "Standard error types for the Kairo language",
   "classes": [
     {
       "name": "BaseError",
-      "description": "Base class for all Helix errors",
+      "description": "Base class for all Kairo errors",
       "requirements": "Must implement 'op as' and 'op panic' operators aside from constructors",
       "note": "This is an abstract base class that all other error types inherit from",
       "required_operators": [
