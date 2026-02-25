@@ -180,7 +180,7 @@ class $function<Rt(Tp...)> {
         constexpr $callable &operator=(const $callable &)     = default;
         constexpr $callable($callable &&) noexcept            = default;
         constexpr $callable &operator=($callable &&) noexcept = default;
-        constexpr virtual ~$callable()                        = default;
+        virtual ~$callable()                        = default;
         constexpr virtual Rt         invoke(Tp... args)       = 0;
         constexpr virtual $callable *clone() const            = 0;
     };
@@ -222,19 +222,19 @@ class $function<Rt(Tp...)> {
     template <typename T>
     constexpr $function(
         typename std::Meta::reference_removed<T> $call_o) {  // NOLINT(google-explicit-constructor)
-        callable = new Callable<libcxx::decay_t<T>>(std::Memory::forward<T>($call_o));  // NOLINT
+        callable = std::Memory::new_aligned<Callable<libcxx::decay_t<T>>>(std::Memory::forward<T>($call_o));  // NOLINT
     }
 
     template <typename T>
     constexpr $function(T $call_o) {  // NOLINT(google-explicit-constructor)
-        callable = new Callable<libcxx::decay_t<T>>(std::Memory::forward<T>($call_o));  // NOLINT
+        callable = std::Memory::new_aligned<Callable<libcxx::decay_t<T>>>(std::Memory::forward<T>($call_o));  // NOLINT
     }
 
     constexpr $function(Rt (*func)(Tp...))  // NOLINT(google-explicit-constructor)
-        : callable(func ? new Callable<std::Meta::const_volatile_removed<Rt (*)(Tp...)>>(func)
+        : callable(func ? std::Memory::new_aligned<Callable<Rt(*)(Tp...)>>(func)
                         : nullptr) {}
 
-    constexpr ~$function() { reset(); }
+    ~$function() { reset(); }
 
     constexpr $function &operator=($function &&other) noexcept {
         if (this != &other) {
@@ -257,15 +257,15 @@ class $function<Rt(Tp...)> {
 
     template <typename T>
     constexpr $function &operator=(T $call_o) {
-        delete callable;
-        callable = new Callable<libcxx::decay_t<T>>(std::Memory::forward<T>($call_o));  // NOLINT
+        std::Memory::delete_aligned(callable);
+        callable = std::Memory::new_aligned<Callable<libcxx::decay_t<T>>>(std::Memory::forward<T>($call_o));  // NOLINT
         return *this;
     }
 
     // Assignment for function pointers
     constexpr $function &operator=(Rt (*func)(Tp...)) {
-        delete callable;
-        callable = func ? new Callable<Rt (*)(typename std::Meta::reference_removed<Tp>...)>(func)
+        std::Memory::delete_aligned(callable);
+        callable = func ? std::Memory::new_aligned<Callable<Rt(*)(Tp...)>>(func)
                         : nullptr;
         return *this;
     }
@@ -283,7 +283,7 @@ class $function<Rt(Tp...)> {
 
     constexpr void reset() noexcept {
         if (callable) {
-            delete callable;
+            std::Memory::delete_aligned(callable);
             callable = nullptr;
         }
     }
