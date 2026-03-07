@@ -29,7 +29,7 @@ H_NAMESPACE_BEGIN
 H_STD_NAMESPACE_BEGIN
 
 template <typename T>
-[[noreturn]] static constexpr void crash(
+static constexpr void crash(
     const T& error,
     const libcxx::source_location& location = libcxx::source_location::current()
 ) {
@@ -37,7 +37,7 @@ template <typename T>
         auto frame = std::Panic::Frame(error, location.file_name(), location.line());
         frame.show_trace = false;
         HX_FN_Vi_Q5_13_kairopanic_handler_Q3_5_5_stdPanicFrame_C_PK_Rv(&frame);
-        throw error; // Ensure the program terminates after the panic handler is executed
+        throw error;
     } else {
         throw error;
     }

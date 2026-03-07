@@ -262,7 +262,7 @@ inline string demangle_partial(const string &input) {
             }
 
             output += dem;
-            i = end_pos + 2;  // will ++ at loop end → land after '$'
+            i = end_pos + 2;  // will ++ at loop end -> land after '$'
             continue;
         }
 

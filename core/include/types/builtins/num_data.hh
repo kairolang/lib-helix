@@ -104,6 +104,34 @@ struct __NumData<signed long long> {
     static constexpr const bool             is_radix  = false;
 };
 
+template <>
+struct __NumData<float> {
+    static constexpr const float digits    = 6;
+    static constexpr const float max       =  3.402823466e+38F;
+    static constexpr const float min       =  1.175494351e-38F;
+    static constexpr const float lowest    = -3.402823466e+38F;
+    static constexpr const bool  is_signed = true;
+    static constexpr const bool  is_radix  = true;
+};
+template <>
+struct __NumData<double> {
+    static constexpr const double digits    = 15;
+    static constexpr const double max       =  1.7976931348623157e+308;
+    static constexpr const double min       =  2.2250738585072014e-308;
+    static constexpr const double lowest    = -1.7976931348623157e+308;
+    static constexpr const bool   is_signed = true;
+    static constexpr const bool   is_radix  = true;
+};
+template <>
+struct __NumData<long double> {
+    static constexpr const long double digits    = 18;
+    static constexpr const long double max       =  1.189731495357231765e+4932L;
+    static constexpr const long double min       =  3.3621031431120935063e-4932L;
+    static constexpr const long double lowest    = -1.189731495357231765e+4932L;
+    static constexpr const bool        is_signed = true;
+    static constexpr const bool        is_radix  = true;
+};
+
 H_STD_NAMESPACE_END
 
 #endif  // _$_HX_CORE_M8NUM_DATA

@@ -373,7 +373,6 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
     /// ----------------------------------------------- ///
 
     (*((*frame).get_context())).crash();
-    libcxx::abort(); // Ensure the program terminates after the panic handler is executed
 }
 
 /// \section CommentedErrorReporting Example Error Reporting (Commented Section)
