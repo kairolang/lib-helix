@@ -122,15 +122,6 @@ struct __NumData<double> {
     static constexpr const bool   is_signed = true;
     static constexpr const bool   is_radix  = true;
 };
-template <>
-struct __NumData<long double> {
-    static constexpr const long double digits    = 18;
-    static constexpr const long double max       =  1.189731495357231765e+4932L;
-    static constexpr const long double min       =  3.3621031431120935063e-4932L;
-    static constexpr const long double lowest    = -1.189731495357231765e+4932L;
-    static constexpr const bool        is_signed = true;
-    static constexpr const bool        is_radix  = true;
-};
 
 H_STD_NAMESPACE_END
 
