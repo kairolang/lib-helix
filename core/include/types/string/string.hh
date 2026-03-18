@@ -184,6 +184,9 @@ inline string nstring_to_string(const nstring &cstr) {
         }
         i += bytes;
     }
+
+    #undef cast
+
     result.resize(buf_pos);
     return result;
 }

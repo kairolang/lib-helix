@@ -38,9 +38,6 @@ constexpr T &&as_reference(T *ptr) noexcept {
 }
 }  // namespace Memory
 
-#define reference(T)      T&;
-#define move_reference(T) T&&;
-
 H_NAMESPACE_END
 H_STD_NAMESPACE_END
 
