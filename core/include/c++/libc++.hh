@@ -20,6 +20,7 @@
 #include <include/c/libc.hh>
 
 #include <cstdlib>
+#include <new>
 #include <cstddef>
 #include <cstdio>
 #include <cassert>
