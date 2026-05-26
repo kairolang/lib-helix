@@ -78,7 +78,7 @@ fn build() -> noreturn! {
         bt::run();
     }
 
-    builder.watch_file("test.kro");
+    builder.watch_file("test.k");
     builder.watch_dir("src");
 
     builder.compile();

@@ -57,7 +57,7 @@ namespace Panic {
 /// ### Constructor Use
 /// This class is typically constructed using the `panic` keyword in Kairo:
 /// ```kairo
-/// panic std::Panic::Frame(std::Error::RuntimeError(), "yes.kro", 12);
+/// panic std::Panic::Frame(std::Error::RuntimeError(), "yes.k", 12);
 /// ```
 /// The `Frame` class can also be extracted into a variable and then passed to the `panic`
 /// system. These are the only valid ways to create and utilize `Frame` objects.
@@ -76,7 +76,7 @@ namespace Panic {
 /// ### Example Usage
 /// ```cpp
 /// // Triggering a panic with a custom error
-/// Frame frame(std::Error::RuntimeError("Some error occurred"), "example.kro", 42);
+/// Frame frame(std::Error::RuntimeError("Some error occurred"), "example.k", 42);
 /// frame.operator$panic();
 /// ```
 ///
