@@ -26,7 +26,7 @@
 /// - `#[trivially_import(true)]`: Prevents the compiler from wrapping the Intermediate Representation (IR) in a module.
 /// - `ffi "c++" import "include/lang/panic.h";`: Links to the C++ runtime header for compatibility.
 ///
-/// \note This panic handler is globally accessible to any Kairo module that wildcard-imports `core.kro`.
+/// \note This panic handler is globally accessible to any Kairo module that wildcard-imports `core.k`.
 
 ffi "c++" import "include/runtime/__panic/panic.hh";
 ffi "c++" import "include/runtime/__panic/stacktrace.hh";
@@ -382,7 +382,7 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
 /// \example
 /// ```
 /// error: expected an '*i32' (pointer) but got an 'i32' (copy) instead
-///     --> file tests/main.kro:1:4
+///     --> file tests/main.k:1:4
 ///    1 | var result: i32? = divide(val1, val2);
 ///      :                    ~~~~~~~^^^^~~~~~~~
 ///    2 | if result? {
@@ -392,7 +392,7 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
 ///   fix: change the call to 'divide(&val1, val2)' to pass a pointer instead of a value.
 ///
 /// note: the function definition is:
-///        --> file tests/main.kro:4:4
+///        --> file tests/main.k:4:4
 ///       4 | fn divide(parm1: *i32, const parm2: i32) -> i32? {
 ///       5 |     if parm2 == 0:
 ///       6 |         panic DivideByZero("Attempted to perform div by 0");
@@ -406,14 +406,14 @@ Stack trace (most recent call last):
    at: start [in /usr/lib/dyld]
    at: clang_call_terminate [in /Volumes/Development/Projects/Kairo/kairo-lang/test]
    at: i32 test::main()
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:42]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:42]
   42 | demo line
    at: bool test::Core::operator==(i32)
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:19]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:19]
   19 | demo lin
    at: i32 test::other_foo()
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:9]
-         [panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:11]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:9]
+         [panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.k:11]
    9 | panic std::Error::NullValueError("This is a value error");
      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 panic: kairo::std::Error::NullValueError(This is a value error)
@@ -422,14 +422,14 @@ Stack trace (most recent call last):
    at: start (in /usr/lib/dyld)
    at: clang_call_terminate (in /Volumes/Development/Projects/Kairo/kairo-lang/test)
    at: i32 test::main()
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:42)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:42)
   42 | demo line
    at: bool test::Core::operator==(i32)
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:19)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:19)
   19 | demo lin
    at: i32 test::other_foo()
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:9)
-         (panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.kro:11)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:9)
+         (panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.k:11)
    9 | panic std::Error::NullValueError("This is a value error");
      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 panic: kairo::std::Error::NullValueError(This is a value error)

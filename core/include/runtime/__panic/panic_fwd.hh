@@ -42,7 +42,7 @@ H_STD_NAMESPACE_END
 ///       mechanisms. It is not intended for direct use by developers.
 ///
 /// \see Panic::Frame
-/// \see ../../panic_handler.kro
+/// \see ../../panic_handler.k
 ///
 /// \note The function name follows a specific naming convention to ensure consistency and
 ///       readability, the ABI scheme is as follows:
@@ -63,7 +63,7 @@ H_STD_NAMESPACE_END
 ///         [_Rv]: Return prefix (`void`).
 ///
 /// \example
-/// \code{.kro}
+/// \code{.k}
 /// // This sets the panic handler function for Kairo's panic system, this can be changed by the
 /// //      user to provide custom panic handling.
 /// // Add the following directive to the main file of your Kairo program:

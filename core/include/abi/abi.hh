@@ -256,7 +256,7 @@ inline string demangle_partial(const string &input) {
             string mangled = input.subslice(i, end_pos - i + 3);  // include "_E$"
             string dem     = demangle(mangled, ty);
 
-            // For Modules, keep only basename (strip dirs + .kro)
+            // For Modules, keep only basename (strip dirs + .k)
             if (ty == ObjectType::Module) {
                 dem = basename_no_ext(dem);
             }

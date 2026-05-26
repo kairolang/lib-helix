@@ -116,7 +116,7 @@ module sync::channel {
 
 }
 
-/* ------------------------------ core/ptr.kro ------------------------------ */
+/* ------------------------------ core/ptr.k ------------------------------ */
 module core::ptr {
 
     // A borrow checked pointer.
@@ -141,7 +141,7 @@ module core::ptr {
 
     const NULL = 0 as unsafe *usize;
 }
-/* end -------------------------- core/ptr.kro -------------------------- end */
+/* end -------------------------- core/ptr.k -------------------------- end */
 
 class <T      > list  ;
 class <T, Size> array ;

@@ -13,7 +13,7 @@
 ///                                                                                              ///
 ///-------------------------------------------------------------------------------- lib-helix ---///
 ///                                                                                              ///
-///   This file (`core.kro`) serves as the primary entry point for globally exported definitions ///
+///   This file (`core.k`) serves as the primary entry point for globally exported definitions ///
 ///   in the Kairo runtime. All functions and symbols defined here exist in the global scope,    ///
 ///   outside of any namespace.                                                                  ///
 ///                                                                                              ///

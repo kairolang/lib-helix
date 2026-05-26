@@ -10,27 +10,27 @@ Complete overview of the entire core library, including all modules, functions, 
 ### Module-Specific Documentation
 
 #### [Symbol Mangling](symbol-mangling.md)
-- **File:** `abi.kro` | **Module:** `std::abi`
+- **File:** `abi.k` | **Module:** `std::abi`
 - Functions for converting symbol names between human-readable and binary-compatible formats
 - Essential for linking, debugging, and symbol resolution
 
 #### [Panic Handling System](panic-handling.md)
-- **File:** `handler.kro`
+- **File:** `handler.k`
 - Global panic handler that manages unrecoverable runtime errors
 - Provides detailed diagnostic information and formatted error output
 
 #### [Panic Frame Management](frame-management.md)
-- **File:** `frame.kro`
+- **File:** `frame.k`
 - Core functionality for creating and managing panic frames
 - Handles object initialization, context preservation, and data access
 
 #### [Frame Context Management](frame-context.md)
-- **File:** `frame_context.kro`
+- **File:** `frame_context.k`
 - Object introspection and crash handling for panic frames
 - Platform-specific type name demangling and error object management
 
 #### [Range Operations](range-operations.md)
-- **File:** `range.kro` | **Module:** `std`
+- **File:** `range.k` | **Module:** `std`
 - Comprehensive range generation and iteration support
 - Integration with range operators (`..`, `..=`) and for-loop constructs
 
@@ -42,7 +42,7 @@ Complete overview of the entire core library, including all modules, functions, 
 ## Quick Reference
 
 ### Core Entry Point
-- **File:** `core.kro`
+- **File:** `core.k`
 - Runtime initialization and global symbol definitions
 - Required for all Kairo programs
 
