@@ -400,32 +400,32 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
 /*
 Stack trace (most recent call last):
    at: start [in /usr/lib/dyld]
-   at: clang_call_terminate [in /Volumes/Development/Projects/Kairo/kairo-lang/test]
+   at: clang_call_terminate [in /Volumes/Development/Projects/Kairo/kairo/test]
    at: i32 test::main()
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:42]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo/test.k:42]
   42 | demo line
    at: bool test::Core::operator==(i32)
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:19]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo/test.k:19]
   19 | demo lin
    at: i32 test::other_foo()
-    -->  [in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:9]
-         [panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.k:11]
+    -->  [in /Volumes/Development/Projects/Kairo/kairo/test.k:9]
+         [panic at /Volumes/Development/Projects/Kairo/kairo/test.k:11]
    9 | panic std::Error::NullValueError("This is a value error");
      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 panic: kairo::std::Error::NullValueError(This is a value error)
 
 Stack trace (most recent call last):
    at: start (in /usr/lib/dyld)
-   at: clang_call_terminate (in /Volumes/Development/Projects/Kairo/kairo-lang/test)
+   at: clang_call_terminate (in /Volumes/Development/Projects/Kairo/kairo/test)
    at: i32 test::main()
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:42)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo/test.k:42)
   42 | demo line
    at: bool test::Core::operator==(i32)
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:19)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo/test.k:19)
   19 | demo lin
    at: i32 test::other_foo()
-    -->  (in /Volumes/Development/Projects/Kairo/kairo-lang/test.k:9)
-         (panic at /Volumes/Development/Projects/Kairo/kairo-lang/test.k:11)
+    -->  (in /Volumes/Development/Projects/Kairo/kairo/test.k:9)
+         (panic at /Volumes/Development/Projects/Kairo/kairo/test.k:11)
    9 | panic std::Error::NullValueError("This is a value error");
      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 panic: kairo::std::Error::NullValueError(This is a value error)

@@ -1,6 +1,6 @@
 -- Project setup
 set_project("core")
-set_version("0.0.1-alpha+5932a", {soname = false})
+set_version("0.1.0-beta-rc.20260627", {soname = false})
 set_description("Kairo Core Lib")
 add_rules("mode.debug", "mode.release")
 
