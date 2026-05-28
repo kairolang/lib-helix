@@ -1,22 +1,32 @@
+/// --- The Kairo Project -------------------------------------------------- ///
+///
+///   Part of the Kairo Project, under the Apache License v2.0 with the
+///   Kairo Runtime Library Exception.
+///
+///   See: https://www.kairolang.org/LICENSE.txt
+///   SPDX-License-Identifier: Apache-2.0 WITH KAIRO-RUNTIME-EXCEPTION
+///   Copyright (c) 2026 Dhruvan Kartik
+///
+/// ------------------------------------------------------------------------ ///
+
 import std::string::{clean} as clean;
 
 print(clean("
     #===-------------- This is the std lib test file, this shall not be imported. --------------===#
     #                                                                                              #
-    #                           ██╗  ██╗ ███████╗ ██╗      ██╗ ██╗  ██╗                            #
-    #                           ██║  ██║ ██╔════╝ ██║      ██║ ╚██╗██╔╝                            #
-    #                           ███████║ █████╗   ██║      ██║  ╚███╔╝                             #
-    #                           ██╔══██║ ██╔══╝   ██║      ██║  ██╔██╗                             #
-    #                           ██║  ██║ ███████╗ ███████╗ ██║ ██╔╝ ██╗                            #
-    #                           ╚═╝  ╚═╝ ╚══════╝ ╚══════╝ ╚═╝ ╚═╝  ╚═╝                            #
+    #                            ██╗  ██╗ █████╗ ██╗██████╗  ██████╗                               #
+    #                            ██║ ██╔╝██╔══██╗██║██╔══██╗██╔═══██╗                              #
+    #                            █████╔╝ ███████║██║██████╔╝██║   ██║                              #
+    #                            ██╔═██╗ ██╔══██║██║██╔══██╗██║   ██║                              #
+    #                            ██║  ██╗██║  ██║██║██║  ██║╚██████╔╝                              #
+    #                            ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝ ╚═════╝                               #
     #                                                                                              #
-    # Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).      #
-    # You are allowed to use, modify, redistribute, and create derivative works, even for          #
-    # commercial purposes, provided that you give appropriate credit, and indicate if changes      #
-    # were made. For more information, please visit: https://creativecommons.org/licenses/by/4.0/  #
+    #    Part of the Kairo Project, under the Apache License v2.0 with the                         #
+    #    Kairo Runtime Library Exception.                                                          #
     #                                                                                              #
-    # SPDX-License-Identifier: Apache-2.0                                                          #
-    # Copyright (c) 2024 (CC BY 4.0)                                                               #
+    #    See: https://www.kairolang.org/LICENSE.txt                                                #
+    #    SPDX-License-Identifier: Apache-2.0 WITH KAIRO-RUNTIME-EXCEPTION                          #
+    #    Copyright (c) 2026 Dhruvan Kartik                                                         #
     #                                                                                              #
     #===----------------------------------------------------------------------------------------===#
 "));

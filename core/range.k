@@ -1,17 +1,13 @@
-///--- The Kairo Project ------------------------------------------------------------------------///
-///                                                                                              ///
-///   Part of the Kairo Project, under the Attribution 4.0 International license (CC BY 4.0).    ///
-///   You are allowed to use, modify, redistribute, and create derivative works, even for        ///
-///   commercial purposes, provided that you give appropriate credit, and indicate if changes    ///
-///   were made.                                                                                 ///
-///                                                                                              ///
-///   For more information on the license terms and requirements, please visit:                  ///
-///     https://creativecommons.org/licenses/by/4.0/                                             ///
-///                                                                                              ///
-///   SPDX-License-Identifier: Apache-2.0                                                        ///
-///   Copyright (c) 2024 The Kairo Project (CC BY 4.0)                                           ///
-///                                                                                              ///
-///------------------------------------------------------------------------------------ Kairo ---///
+/// --- The Kairo Project -------------------------------------------------- ///
+///
+///   Part of the Kairo Project, under the Apache License v2.0 with the
+///   Kairo Runtime Library Exception.
+///
+///   See: https://www.kairolang.org/LICENSE.txt
+///   SPDX-License-Identifier: Apache-2.0 WITH KAIRO-RUNTIME-EXCEPTION
+///   Copyright (c) 2026 Dhruvan Kartik
+///
+/// ------------------------------------------------------------------------ ///
 ///
 /// ### Overview
 ///
@@ -129,7 +125,7 @@
 /// maintain consistency with the project's coding standards.
 ///
 /// For questions or discussions about this module, join the community forums at:
-/// https://helix-lang.com/community
+/// https://kairolang.org
 #[trivially_import(true)] // prevents wrapping IR in a `unwind` module, keeping the handler globally accessible
 
 module std {

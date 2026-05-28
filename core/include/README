@@ -21,25 +21,6 @@ purpose and functionality
 - **seamless integration**:
   - the header files in this directory are tightly integrated with the kairo compiler and runtime, providing a robust and efficient foundation for all kairo programs.
 
-usage
-=====
-
-- **do not modify without expertise**:
-  - modifying files in this directory requires an in-depth understanding of both the kairo runtime and the underlying c++ implementation.
-  - improper changes can result in compiler or runtime failures.
-
-- **automatic inclusion**:
-  - the files in `core/include` are automatically included by the kairo compiler during the build process.
-
-- **license information**:
-  - files in this directory are part of the kairo project and are distributed under the attribution 4.0 international license (cc by 4.0).
-  - you are free to use, modify, and redistribute these files, even for commercial purposes, provided proper credit is given and changes are noted.
-
-  for more details on the license, visit: [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
-
-- **spdx identifier**:
-  - `spdx-license-identifier: cc-by-4.0`
-
 warning
 =======
 
@@ -49,6 +30,4 @@ warning
 
 license
 =======
-
-this directory is part of the kairo project, under the attribution 4.0 international license (cc by 4.0).
-copyright (c) 2024 the kairo project (cc by 4.0).
+refer to https://kairolang.org/LICENSE.txt for the license information regarding the use and distribution of the files in this directory.
