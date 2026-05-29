@@ -54,7 +54,6 @@
     #include <fpieee.h>
     #include <malloc.h>
     #include <mbstring.h>
-    #include <minmax.h>
     #include <new.h>
     #include <process.h>
     #include <safeint.h>
