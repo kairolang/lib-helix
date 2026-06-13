@@ -63,6 +63,11 @@ class basic {
         : data(str, len) {}
     constexpr basic(const slice_t &s) noexcept
         : data(s.raw(), s.size()) {}
+    constexpr basic(const string_t &str) noexcept
+        : data(str) {}
+    constexpr operator string_t() const noexcept {
+        return data;
+    }
 
     template <typename U = CharT>
     basic(const char *str,
@@ -266,8 +271,8 @@ class basic {
 
 H_STD_NAMESPACE_END
 
-using nstring  = std::String::basic<char>;
-using string   = std::String::basic<wchar_t>;
+using string   = std::String::basic<char>;
+using wstring  = std::String::basic<wchar_t>;
 using string32 = std::String::basic<char32_t>;
 
 H_NAMESPACE_END
