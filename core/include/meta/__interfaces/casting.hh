@@ -31,7 +31,7 @@ class basic;
 }
 
 H_STD_NAMESPACE_END
-using string = std::String::basic<char>;
+using string = std::String::basic<wchar_t>;
 H_NAMESPACE_END
 // ----- forward declarations end ----- //
 

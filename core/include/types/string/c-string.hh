@@ -23,87 +23,87 @@ H_STD_NAMESPACE_BEGIN
 namespace String {
 template <typename T>
 constexpr inline T *concat(T *dest, const T *src) noexcept {
-    return LIBCXX_NAMESPACE::strcat(dest, src);
+    return LIBCXX_NAMESPACE::wcscat(dest, src);
 }
 
 template <typename T>
 constexpr inline T *concat_n(T *dest, const T *src, usize n) noexcept {
-    return LIBCXX_NAMESPACE::strncat(dest, src, n);
+    return LIBCXX_NAMESPACE::wcsncat(dest, src, n);
 }
 
 template <typename T>
 constexpr inline T *copy(T *dest, const T *src) noexcept {
-    return LIBCXX_NAMESPACE::strcpy(dest, src);
+    return LIBCXX_NAMESPACE::wcscpy(dest, src);
 }
 
 template <typename T>
 constexpr inline T *copy_n(T *dest, const T *src, usize n) noexcept {
-    return LIBCXX_NAMESPACE::strncpy(dest, src, n);
+    return LIBCXX_NAMESPACE::wcsncpy(dest, src, n);
 }
 
 template <typename T>
 constexpr inline std::Questionable<T *> find(const T *str, int c) noexcept {
-    T *result = LIBCXX_NAMESPACE::strchr(str, c);
+    T *result = LIBCXX_NAMESPACE::wcschr(str, c);
     return result ? result : null;
 }
 
 template <typename T>
 constexpr inline std::Questionable<T *> find_last(const T *str, int c) noexcept {
-    T *result = LIBCXX_NAMESPACE::strrchr(str, c);
+    T *result = LIBCXX_NAMESPACE::wcsrchr(str, c);
     return result ? result : null;
 }
 
 template <typename T>
 constexpr inline std::Questionable<T *> find_any(const T *str, const T *accept) noexcept {
-    T *result = LIBCXX_NAMESPACE::strpbrk(str, accept);
+    T *result = LIBCXX_NAMESPACE::wcspbrk(str, accept);
     return result ? result : null;
 }
 
 template <typename T>
 constexpr inline std::Questionable<T *> find_sub(const T *haystack, const T *needle) noexcept {
-    T *result = LIBCXX_NAMESPACE::strstr(haystack, needle);
+    T *result = LIBCXX_NAMESPACE::wcsstr(haystack, needle);
     return result ? result : null;
 }
 
 template <typename T>
 constexpr inline vec<T *> split(T *str, const T *delim) noexcept {
     vec<T *> tokens;
-    T       *token = LIBCXX_NAMESPACE::strtok(str, delim, nullptr);
+    T       *token = LIBCXX_NAMESPACE::wcstok(str, delim, nullptr);
     while (token) {
         tokens.push_back(token);
-        token = LIBCXX_NAMESPACE::strtok(nullptr, delim, nullptr);
+        token = LIBCXX_NAMESPACE::wcstok(nullptr, delim, nullptr);
     }
     return tokens;
 }
 
 template <typename T>
 constexpr inline usize length(const T *str) noexcept {
-    return LIBCXX_NAMESPACE::strlen(str);
+    return LIBCXX_NAMESPACE::wcslen(str);
 }
 
 template <typename T>
 constexpr inline usize prefix_length(const T *str, const T *chars, bool exclude = false) noexcept {
-    return exclude ? LIBCXX_NAMESPACE::strcspn(str, chars) : LIBCXX_NAMESPACE::strspn(str, chars);
+    return exclude ? LIBCXX_NAMESPACE::wcscspn(str, chars) : LIBCXX_NAMESPACE::wcsspn(str, chars);
 }
 
 template <typename T>
 constexpr inline int compare(const T *a, const T *b) noexcept {
-    return LIBCXX_NAMESPACE::strcmp(a, b);
+    return LIBCXX_NAMESPACE::wcscmp(a, b);
 }
 
 template <typename T>
 constexpr inline int compare_n(const T *a, const T *b, usize n) noexcept {
-    return LIBCXX_NAMESPACE::strncmp(a, b, n);
+    return LIBCXX_NAMESPACE::wcsncmp(a, b, n);
 }
 
 template <typename T>
 constexpr inline int compare_locale(const T *a, const T *b) noexcept {
-    return LIBCXX_NAMESPACE::strcoll(a, b);
+    return LIBCXX_NAMESPACE::wcscoll(a, b);
 }
 
 template <typename T>
 constexpr inline usize transform(T *dest, const T *src, usize n) noexcept {
-    return LIBCXX_NAMESPACE::strxfrm(dest, src, n);
+    return LIBCXX_NAMESPACE::wcsxfrm(dest, src, n);
 }
 
 #ifdef _WIN32
