@@ -179,6 +179,7 @@ class $function<Rt(Tp...)> {
         virtual ~$callable()                        = default;
         constexpr virtual Rt         invoke(Tp... args)       = 0;
         constexpr virtual $callable *clone() const            = 0;
+        constexpr virtual void       destroy() noexcept       = 0;
     };
 
     template <typename T>
@@ -198,6 +199,10 @@ class $function<Rt(Tp...)> {
 
         constexpr $callable *clone() const override {
             return std::Memory::new_aligned<Callable<T>>(callable);
+        }
+        
+        constexpr void destroy() noexcept override {
+            std::Memory::delete_aligned(this);   // `this` is Callable<T>* - correct 16-byte alignment
         }
     };
 
@@ -253,16 +258,14 @@ class $function<Rt(Tp...)> {
 
     template <typename T>
     constexpr $function &operator=(T $call_o) {
-        std::Memory::delete_aligned(callable);
-        callable = std::Memory::new_aligned<Callable<libcxx::decay_t<T>>>(std::Memory::forward<T>($call_o));  // NOLINT
+        if (callable) { callable->destroy(); }     // was: delete_aligned(callable)
+        callable = std::Memory::new_aligned<Callable<libcxx::decay_t<T>>>(std::Memory::forward<T>($call_o));
         return *this;
     }
 
-    // Assignment for function pointers
     constexpr $function &operator=(Rt (*func)(Tp...)) {
-        std::Memory::delete_aligned(callable);
-        callable = func ? std::Memory::new_aligned<Callable<Rt(*)(Tp...)>>(func)
-                        : nullptr;
+        if (callable) { callable->destroy(); }     // was: delete_aligned(callable)
+        callable = func ? std::Memory::new_aligned<Callable<Rt(*)(Tp...)>>(func) : nullptr;
         return *this;
     }
 
@@ -279,7 +282,7 @@ class $function<Rt(Tp...)> {
 
     constexpr void reset() noexcept {
         if (callable) {
-            std::Memory::delete_aligned(callable);
+            callable->destroy();   // was: std::Memory::delete_aligned(callable);
             callable = nullptr;
         }
     }
