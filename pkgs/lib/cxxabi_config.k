@@ -9,7 +9,7 @@
 eval if !defined!(____CXXABI_CONFIG_H) {
     define ____CXXABI_CONFIG_H;
 
-    eval if defined(__arm__) && !defined(__USING_SJLJ_EXCEPTIONS__) && !defined(__ARM_DWARF_EH__) && !defined(__SEH__) {
+    eval if defined(__arm__) && (!defined(__USING_SJLJ_EXCEPTIONS__)) && (!defined(__ARM_DWARF_EH__)) && !defined(__SEH__) {
         ffi define _LIBCXXABI_ARM_EHABI;
     }
 

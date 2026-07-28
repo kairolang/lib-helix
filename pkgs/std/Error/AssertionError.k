@@ -43,7 +43,7 @@ default class AssertionError derives std::Error::BaseError {
     override default fn op delete (self);
 
     priv fn generate_string(self) -> string {
-        if (!self.file_name.empty() && self.line_number >= 0) {
+        if ((!self.file_name.empty()) && self.line_number >= 0) {
             return f"{self.msg} in file {self.file_name} at line {self.line_number}";
         }
         return self.msg;
