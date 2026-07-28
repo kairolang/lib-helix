@@ -495,16 +495,26 @@ class KairoLanguageServer(LanguageServer):
                 logger.critical("Kairo binary not found: %s", self.kairo_path)
                 raise FileNotFoundError(f"Kairo binary does not exist: {self.kairo_path}")
 
-            command = [self.kairo_path, file_path, "--lsp-mode"]
-
-            if analyze:
-                command.append("--emit-ir")
-
             # Use persistent cached compile_commands
             self.compile_db.load(file_path)
-            if self.compile_db.commands:
-                command.extend(self.compile_db.commands)
+            args = list(self.compile_db.commands or [])
 
+            # Everything after `--` is handed to clang verbatim -- kairo never
+            # parses it. Kairo's own flags must land before the separator, or
+            # clang rejects them as unknown and the whole run fails.
+            try:
+                sep = args.index("--")
+            except ValueError:
+                sep = len(args)
+
+            kairo_flags = ["--lsp-mode"]
+            if analyze:
+                kairo_flags.append("--emit-ir")
+
+            command = [self.kairo_path, file_path]
+            command.extend(args[:sep])
+            command.extend(kairo_flags)
+            command.extend(args[sep:])
 
             env = os.environ.copy()
 
@@ -530,16 +540,14 @@ class KairoLanguageServer(LanguageServer):
             if stderr:
                 logger.error("Kairo stderr: %s", stderr.decode("utf-8"))
 
-            if process.returncode == 0:
+            # Exit code does not gate whether stdout is worth reading: a
+            # warnings-only run exits 0 and still carries a full JSON payload.
+            result = self._remove_ansi_colors(stdout.decode("utf-8").strip())
+
+            if not result:
+                # Nothing on stdout at all -- a genuinely clean run, or a crash.
                 self.diagnostics[document.uri] = (document.version, [])
-                return True
-
-            result = stdout.decode("utf-8").strip()
-            result = self._remove_ansi_colors(result)
-
-            if not result and process.returncode != 0:
-                self.diagnostics[document.uri] = (document.version, diagnostics)
-                return False
+                return process.returncode == 0
 
             try:
                 json_result = json.loads(result)
@@ -575,6 +583,14 @@ class KairoLanguageServer(LanguageServer):
                 "warn": DiagnosticSeverity.Warning,
                 "fatal": DiagnosticSeverity.Error,
             }.get(str(error["level"]).strip(), DiagnosticSeverity.Information)
+
+            # A fatal anywhere in the closure means clang aborted before
+            # reaching this file, so an empty diagnostic list is meaningless
+            # rather than clean. The path filter below would otherwise discard
+            # it in silence.
+            if str(error["level"]).strip() == "fatal":
+                logger.error("fatal from %s:%s: %s",
+                             error["file"], error["line"], error["msg"])
 
             if not compare_paths(error["file"].replace("\\\\", "\\"), file_path):
                 continue

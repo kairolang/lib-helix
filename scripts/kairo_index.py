@@ -257,9 +257,13 @@ def run_emit_ast(
     useful trees for files that do not compile -- the normal case while
     stage 1's syntax is mid-migration.
     """
-    cmd = [kairo_bin, path, "--emit-ast", "--lsp-mode"]
-    if extra_args:
-        cmd.extend(extra_args)
+    # Kairo flags must precede `--`; everything after it goes to clang verbatim.
+    args = list(extra_args or [])
+    try:
+        sep = args.index("--")
+    except ValueError:
+        sep = len(args)
+    cmd = [kairo_bin, path] + args[:sep] + ["--emit-ast", "--lsp-mode"] + args[sep:]
 
     # stage 0 resolves relative -I paths against PWD, not the process cwd, and
     # an editor-hosted server inherits PWD=/ from the extension host.  Without
