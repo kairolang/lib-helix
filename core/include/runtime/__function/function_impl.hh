@@ -17,6 +17,7 @@
 #include <include/meta/meta.hh>
 #include <include/runtime/__memory/memory.hh>
 #include <include/meta/remove_reference.hh>
+#include <memory>
 
 H_NAMESPACE_BEGIN
 

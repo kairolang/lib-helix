@@ -199,11 +199,34 @@ inline FrameSummary *capture(int max_depth) {
 
 #else
 
+// The capture buffers are ~16 MB per thread. They must NOT be static TLS:
+// glibc carves the static TLS block out of every thread's stack mapping, so
+// any thread created with a default-sized stack (LLVM's parallel executor,
+// lld's workers, a plain std::thread) was left with a few KB of real stack
+// and overflowed on its first large frame. Heap-allocate on first capture
+// instead; the TLS cost is one pointer and threads that never capture pay
+// nothing.
+struct CaptureBuffers {
+    FrameSummary nodes[MAX_STACK_FRAME_DEPTH];
+    Location     native_locs[MAX_STACK_FRAME_DEPTH];
+    wchar_t      fn_bufs[MAX_STACK_FRAME_DEPTH][1024];
+    wchar_t      file_bufs[MAX_STACK_FRAME_DEPTH][1024];
+};
+
+struct CaptureBuffersOwner {
+    CaptureBuffers *p = nullptr;
+    ~CaptureBuffersOwner() { delete p; }
+};
+
 inline FrameSummary *capture(int max_depth) {
-    static thread_local FrameSummary s_nodes[MAX_STACK_FRAME_DEPTH];
-    static thread_local Location     s_native_locs[MAX_STACK_FRAME_DEPTH];
-    static thread_local wchar_t      s_fn_bufs[MAX_STACK_FRAME_DEPTH][1024];
-    static thread_local wchar_t      s_file_bufs[MAX_STACK_FRAME_DEPTH][1024];
+    static thread_local CaptureBuffersOwner s_owner;
+    if (s_owner.p == nullptr) {
+        s_owner.p = new CaptureBuffers();
+    }
+    auto &s_nodes       = s_owner.p->nodes;
+    auto &s_native_locs = s_owner.p->native_locs;
+    auto &s_fn_bufs     = s_owner.p->fn_bufs;
+    auto &s_file_bufs   = s_owner.p->file_bufs;
 
     auto clamp_limit = [](int v) {
         if (v <= 0) {
