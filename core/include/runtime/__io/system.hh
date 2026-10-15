@@ -169,8 +169,7 @@ struct ProcessOutput {
 
     void append_stdout(const char *data, size_t n) {
         libcxx::lock_guard<libcxx::mutex> lg(stdout_mutex);
-        auto                              str = cstring_to_string(libcxx::string(data, n));
-        stdout_data.append(str);
+        stdout_data.append(string(data, n));
         if (on_stdout) {
             on_stdout(stdout_data.subslice(stdout_data.size() - n, n));
         }
@@ -178,8 +177,7 @@ struct ProcessOutput {
 
     void append_stderr(const char *data, size_t n) {
         libcxx::lock_guard<libcxx::mutex> lg(stderr_mutex);
-        auto                              str = cstring_to_string(libcxx::string(data, n));
-        stderr_data.append(str);
+        stderr_data.append(string(data, n));
         if (on_stderr) {
             on_stderr(stderr_data.subslice(stderr_data.size() - n, n));
         }
@@ -461,7 +459,7 @@ class Subprocess {
         if (!m_env.empty()) {
             env.reserve(m_env.size());
             for (const auto &kv : m_env) {
-                env.push_back(kv.first + L"=" + kv.second);
+                env.push_back(kv.first + "=" + kv.second);
             }
         }
 
@@ -503,44 +501,38 @@ class Subprocess {
 
         // note: If you need stdin, add a pipe and set si.hStdInput.
         PROCESS_INFORMATION pi{};
-        // convert command to wide.
-        const libcxx::wstring& wcmd_w(
-            wcmd.raw_string());  // wcmd is "libcxx::string" but contains wide-logic; your helpers
-                                 // are named cstring_to_string/string_to_cstring; here we assume
-                                 // wcmd already logical wide.
-        // if wcmd actually contains wide characters stored in narrow string, replace with your
-        // cstring_to_string appropriately.
+        // `string` holds UTF-8 bytes; the W APIs want UTF-16, so every string
+        // crossing into CreateProcessW is decoded here and nowhere else.
+        auto widen = [](const string &s) -> libcxx::wstring {
+            if (s.empty()) {
+                return {};
+            }
+            int n = MultiByteToWideChar(
+                CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), nullptr, 0);
+            libcxx::wstring out(static_cast<size_t>(n), L'\0');
+            MultiByteToWideChar(
+                CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), out.data(), n);
+            return out;
+        };
+
+        const libcxx::wstring wcmd_w = widen(wcmd);
 
         // working directory
         libcxx::wstring wdir_w;
         LPCWSTR         lpCurrentDirectory = nullptr;
         if ((working_dir != nullptr) && !working_dir->empty()) {
-            wdir_w.assign(working_dir->begin(), working_dir->end());
+            wdir_w             = widen(*working_dir);
             lpCurrentDirectory = wdir_w.c_str();
         }
 
         // environment block (optional). If env empty, inherit.
         // windows expects a double-null-terminated block of WCHAR pairs "Var=Value\0... \0\0"
-        libcxx::wstring                 env_block;
-        LPWSTR                          lpEnvironment = nullptr;
-        libcxx::vector<libcxx::wstring> env_entries;
+        libcxx::wstring env_block;
+        LPWSTR          lpEnvironment = nullptr;
 
         if (!env.empty()) {
             for (auto &e : env) {
-                // expect "KEY=VALUE" in UTF-8ish container; convert.
-                libcxx::wstring we(e.raw_string());
-                env_entries.push_back(std::Memory::move(we));
-            }
-
-            size_t total = 0;
-            for (auto &s : env_entries) {
-                total += (s.size() + 1);
-            }
-
-            env_block.reserve(total + 1);
-
-            for (auto &s : env_entries) {
-                env_block.append(s);
+                env_block.append(widen(e));
                 env_block.push_back(L'\0');
             }
 
@@ -628,24 +620,24 @@ class Subprocess {
 
             // optional working dir
             if ((working_dir != nullptr) && !working_dir->empty()) {
-                if (chdir(string_to_cstring(*working_dir).c_str()) != 0) {
+                if (chdir(working_dir->c_str()) != 0) {
                     _exit(127);
                 }
             }
 
             // build command for /bin/sh -c to keep parity with shell command interpretation,
             // or exec directly if you want no shell. Here we mimic your original system() usage.
-            libcxx::string cmd = string_to_cstring(wcmd);
+            libcxx::string cmd(wcmd.c_str(), wcmd.size());
 
             // environment setup
             if (!env.empty()) {
                 // construct new environment
                 // note: setenv() is easier than building envp; do before exec.
                 for (const auto &e : env) {
-                    auto pos = e.lfind(L"=");
-                    if (pos != libcxx::string::npos) {
-                        auto key = string_to_cstring(e.raw_string().substr(0, pos));
-                        auto val = string_to_cstring(e.raw_string().substr(pos + 1));
+                    auto pos = e.view().find('=');
+                    if (pos != libcxx::string_view::npos) {
+                        libcxx::string key(e.view().substr(0, pos));
+                        libcxx::string val(e.view().substr(pos + 1));
                         setenv(key.c_str(), val.c_str(), 1);
                     }
                 }
@@ -888,7 +880,7 @@ class Subprocess {
 // convenience helper similar to your original signature but async-capable.
 // returns a Subprocess you can wait on later.
 // example usage:
-//  auto p = async_system(L"ls -la", true, {{"PATH", "/usr/bin"}}, L"/home/user");
+//  auto p = async_system("ls -la", true, {{"PATH", "/usr/bin"}}, "/home/user");
 //  p.wait();  // or p.timeout(5000) to wait with timeout
 //  auto output = p.output();  // get ProcessOutput with stdout/stderr data
 //  if (output.return_code != 0) {

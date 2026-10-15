@@ -70,7 +70,7 @@ using isize = i8;
     "Kairo core: Unable to determine platform bitness. Supported macros: __KAIRO_64BIT__, __KAIRO_32BIT__, __KAIRO_16BIT__, __KAIRO_8BIT__. Define one explicitly using '-D' during compilation."
 #endif
 
-using _H_RESERVED$char = wchar_t;
+using _H_RESERVED$char = unsigned char;
 
 namespace kairo::std::Legacy {
     using _H_RESERVED$char = char;

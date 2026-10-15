@@ -63,8 +63,8 @@ module std::abi {
                 output += ch;
             } else {
                 output += '$';
-                var hex: std::Memory::buffer::<char, 4>;
-                swprintf(hex, 4, "%02X".raw(), ch as i32);
+                var hex: std::Memory::buffer::<std::Legacy::char, 4>;
+                libcxx::snprintf(hex, 4, "%02X".c_str(), ch as i32);
                 output += hex;
             }
         }
@@ -126,7 +126,7 @@ module std::abi {
 
         var expected_len: usize;
         try {
-            expected_len = libcxx::stoul(len_str.raw()) as usize;
+            expected_len = libcxx::stoul(libcxx::string(len_str.c_str())) as usize;
         } catch {
             panic std::Error::StateMismatchError("Invalid length in mangled name");
         }
@@ -139,7 +139,7 @@ module std::abi {
             if (encoded[i] == '$' && i + 2 < encoded.length()) {
                 var hex: string = encoded.subslice(i + 1, 2);
                 try {
-                    var ch: char = (libcxx::stoul(hex.raw(), &null, 16)) as char;
+                    var ch: char = (libcxx::stoul(libcxx::string(hex.c_str()), &null, 16)) as char;
                     output += ch;
                     i += 3;
                 } catch {

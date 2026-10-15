@@ -25,13 +25,13 @@ H_NAMESPACE_BEGIN
 H_STD_NAMESPACE_BEGIN
 
 namespace String {
-template <typename CharT, typename Traits = libcxx::char_traits<CharT>>
+template <typename CharT, typename Traits = String::default_traits_t<CharT>>
     requires CharTraits<Traits, CharT>
 class basic;
 }
 
 H_STD_NAMESPACE_END
-using string = std::String::basic<wchar_t>;
+using string = std::String::basic<unsigned char>;
 H_NAMESPACE_END
 // ----- forward declarations end ----- //
 

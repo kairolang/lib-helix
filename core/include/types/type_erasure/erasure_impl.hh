@@ -91,7 +91,7 @@ inline const libcxx::type_info *TypeErasureImpl<T>::type_info() const {
 template <typename T>
 inline TypeErasure *TypeErasureImpl<T>::clone() const {
     if (object == nullptr) {
-        throw std::Error::RuntimeError(L"Cannot clone a null object.");
+        throw std::Error::RuntimeError("Cannot clone a null object.");
     }
     return new TypeErasureImpl<T>(new T(*object));  // NOLINT(cppcoreguidelines-owning-memory)
 }

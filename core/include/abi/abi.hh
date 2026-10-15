@@ -33,25 +33,25 @@ inline string mangle(const string &input, ObjectType type) {
     string prefix;
     switch (type) {
         case ObjectType::Module:
-            prefix = L"_$M_";
+            prefix = "_$M_";
             break;
         case ObjectType::Class:
-            prefix = L"_$C_";
+            prefix = "_$C_";
             break;
         case ObjectType::Struct:
-            prefix = L"_$S_";
+            prefix = "_$S_";
             break;
         case ObjectType::Function:
-            prefix = L"_$F_";
+            prefix = "_$F_";
             break;
         case ObjectType::Operator:
-            prefix = L"_$O_";
+            prefix = "_$O_";
             break;
         case ObjectType::Reserved:
-            prefix = L"_$R_";
+            prefix = "_$R_";
             break;
         case ObjectType::Internal:
-            prefix = L"_$I_";
+            prefix = "_$I_";
             break;
         default:
             break;
@@ -59,56 +59,58 @@ inline string mangle(const string &input, ObjectType type) {
 
     string output = prefix;
 
-    for (wchar_t ch : input) {
-        if (libcxx::iswalnum(ch) || ch == L'_') {
+    for (auto ch : input) {
+        if (libcxx::isalnum(static_cast<unsigned char>(ch)) || ch == '_') {
             output += ch;
         } else {
-            // Encode as $XXXX (4 hex digits)
-            wchar_t hex[5];
-            swprintf(hex, 5, L"%04X", static_cast<unsigned int>(ch));
-            output += L'$';
+            // Encode as $XXXX (4 hex digits); `ch` is a byte, so the top two
+            // are always 00 - kept for compatibility with `demangle`.
+            char hex[6];
+            libcxx::snprintf(hex, 6, "$%04X", static_cast<unsigned int>(ch));
             output += hex;
         }
     }
 
-    // Append length marker
-    output += L"$L";
-    output += input + L"_E$";
+    // Append length marker. `demangle` checks the decoded length against it,
+    // so this must be the length, not the input itself.
+    output += "$L";
+    output += libcxx::to_string(input.length()).c_str();
+    output += "_E$";
 
     return output;
 }
 
 inline ObjectType is_mangled(const string &input) {
-    if (input.length() < 4 || input[0] != L'_' || input[1] != L'$') {
+    if (input.length() < 4 || input[0] != '_' || input[1] != '$') {
         return ObjectType::None;
     }
 
-    string prefix = input.subslice(0, 3);
-    if (prefix == L"_$M_")
+    string prefix = input.subslice(0, 4);
+    if (prefix == "_$M_")
         return ObjectType::Module;
-    if (prefix == L"_$C_")
+    if (prefix == "_$C_")
         return ObjectType::Class;
-    if (prefix == L"_$S_")
+    if (prefix == "_$S_")
         return ObjectType::Struct;
-    if (prefix == L"_$F_")
+    if (prefix == "_$F_")
         return ObjectType::Function;
-    if (prefix == L"_$O_")
+    if (prefix == "_$O_")
         return ObjectType::Operator;
-    if (prefix == L"_$R_")
+    if (prefix == "_$R_")
         return ObjectType::Reserved;
-    if (prefix == L"_$I_")
+    if (prefix == "_$I_")
         return ObjectType::Internal;
 
     return ObjectType::None;
 }
 
-inline bool is_hex_digit(wchar_t c) {
-    return (c >= L'0' && c <= L'9') || (c >= L'a' && c <= L'f') || (c >= L'A' && c <= L'F');
+inline bool is_hex_digit(_H_RESERVED$char c) {
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
 inline string basename_no_ext(const string &path) {
-    std::Questionable<usize> slash  = path.rfind(L"/");
-    std::Questionable<usize> bslash = path.rfind(L"\\");
+    std::Questionable<usize> slash  = path.rfind("/");
+    std::Questionable<usize> bslash = path.rfind("\\");
     std::Questionable<usize> sep    = slash;
 
     if (bslash != null && (sep == null || (*bslash) > (*sep))) {
@@ -116,7 +118,7 @@ inline string basename_no_ext(const string &path) {
     }
 
     usize                    start = (sep == null) ? 0 : (*sep) + 1;  // PROBLEM
-    std::Questionable<usize> dot   = path.rfind(L".");
+    std::Questionable<usize> dot   = path.rfind(".");
 
     usize end = (dot != null && (*dot) > start) ? (*dot) : static_cast<usize>(path.length());
 
@@ -128,25 +130,25 @@ inline string demangle(const string &input, ObjectType type) {
     string expected_prefix;
     switch (type) {
         case ObjectType::Module:
-            expected_prefix = L"_$M_";
+            expected_prefix = "_$M_";
             break;
         case ObjectType::Class:
-            expected_prefix = L"_$C_";
+            expected_prefix = "_$C_";
             break;
         case ObjectType::Struct:
-            expected_prefix = L"_$S_";
+            expected_prefix = "_$S_";
             break;
         case ObjectType::Function:
-            expected_prefix = L"_$F_";
+            expected_prefix = "_$F_";
             break;
         case ObjectType::Operator:
-            expected_prefix = L"_$O_";
+            expected_prefix = "_$O_";
             break;
         case ObjectType::Reserved:
-            expected_prefix = L"_$R_";
+            expected_prefix = "_$R_";
             break;
         case ObjectType::Internal:
-            expected_prefix = L"_$I_";
+            expected_prefix = "_$I_";
             break;
         default:
             break;
@@ -156,12 +158,12 @@ inline string demangle(const string &input, ObjectType type) {
         throw libcxx::invalid_argument("Invalid mangled name or type mismatch");
     }
 
-    usize len_pos = input.raw_string().rfind(L"$L");
-    if (len_pos == string::npos) {
+    usize len_pos = input.view().rfind("$L");
+    if (len_pos == libcxx::string_view::npos) {
         throw libcxx::invalid_argument("Invalid mangled name: missing length");
     }
-    usize end_pos = input.raw_string().rfind(L"_E$");
-    if (end_pos == string::npos || end_pos <= len_pos) {
+    usize end_pos = input.view().rfind("_E$");
+    if (end_pos == libcxx::string_view::npos || end_pos <= len_pos) {
         throw libcxx::invalid_argument("Invalid mangled name: missing end marker");
     }
 
@@ -172,14 +174,14 @@ inline string demangle(const string &input, ObjectType type) {
 
     usize expected_len = 0;
     try {
-        expected_len = libcxx::stoul(len_str);
+        expected_len = libcxx::stoul(libcxx::string(len_str.view()));
     } catch (...) { throw libcxx::invalid_argument("Invalid length in mangled name"); }
 
     string encoded = input.subslice(expected_prefix.length(), len_pos - expected_prefix.length());
     string output;
 
     for (usize i = 0; i < encoded.length();) {
-        if (encoded[i] == L'$') {
+        if (encoded[i] == '$') {
             usize j     = i + 1;
             usize count = 0;
             while (j < encoded.length() && count < 4 && is_hex_digit(encoded[j])) {
@@ -190,8 +192,8 @@ inline string demangle(const string &input, ObjectType type) {
             if (count == 4 || count == 2) {
                 string hx = encoded.subslice(i + 1, count);
                 try {
-                    unsigned long code = libcxx::stoul(hx, nullptr, 16);
-                    output += static_cast<wchar_t>(code);
+                    unsigned long code = libcxx::stoul(libcxx::string(hx.view()), nullptr, 16);
+                    output += static_cast<_H_RESERVED$char>(code);
                     i = j;
 
                     continue;
@@ -214,28 +216,28 @@ inline string demangle(const string &input, ObjectType type) {
 inline string demangle_partial(const string &input) {
     string output;
     for (usize i = 0; i < input.length(); ++i) {
-        if (i + 3 < input.length() && input[i] == L'_' && input[i + 1] == L'$') {
+        if (i + 3 < input.length() && input[i] == '_' && input[i + 1] == '$') {
             ObjectType ty = ObjectType::None;
             switch (input[i + 2]) {
-                case L'M':
+                case 'M':
                     ty = ObjectType::Module;
                     break;
-                case L'C':
+                case 'C':
                     ty = ObjectType::Class;
                     break;
-                case L'S':
+                case 'S':
                     ty = ObjectType::Struct;
                     break;
-                case L'F':
+                case 'F':
                     ty = ObjectType::Function;
                     break;
-                case L'O':
+                case 'O':
                     ty = ObjectType::Operator;
                     break;
-                case L'R':
+                case 'R':
                     ty = ObjectType::Reserved;
                     break;
-                case L'I':
+                case 'I':
                     ty = ObjectType::Internal;
                     break;
                 default:
@@ -243,7 +245,7 @@ inline string demangle_partial(const string &input) {
                     continue;
             }
 
-            usize end_pos = input.lfind(L"_E$", i);  // your string type uses lfind
+            usize end_pos = input.raw_string().find(string("_E$").raw_string(), i);
             if (end_pos == string::npos) {
                 output += input[i];
                 continue;
@@ -270,23 +272,22 @@ inline string demangle_partial(const string &input) {
 
 // --- Utility: remove leading "kairo::" (and the "::kairo::" variant)
 inline string strip_kairo_prefix(const string &input) {
-    const libcxx::wstring raw    = input.raw_string();
-    const libcxx::wstring prefix = L"kairo::";
-    const libcxx::wstring midfix = L"::kairo::";
-    
-    libcxx::wstring result;
+    const libcxx::string_view raw    = input.view();
+    const libcxx::string_view prefix = "kairo::";
+    const libcxx::string_view midfix = "::kairo::";
+
+    libcxx::string result;
     result.reserve(raw.size());
 
     usize i = 0;
     while (i < raw.size()) {
-        if (i + midfix.size() <= raw.size() && raw.compare(i, midfix.size(), midfix) == 0) {
+        if (raw.substr(i).starts_with(midfix)) {
             result.append(midfix);
             i += midfix.size();
             continue;
         }
 
-        if (i + prefix.size() <= raw.size() && raw.compare(i, prefix.size(), prefix) == 0 &&
-            (i < 2 || raw.compare(i - 2, 2, L"::") != 0)) {
+        if (raw.substr(i).starts_with(prefix) && (i < 2 || raw.substr(i - 2, 2) != "::")) {
             i += prefix.size();  // skip it
             continue;
         }
@@ -295,7 +296,7 @@ inline string strip_kairo_prefix(const string &input) {
         i++;
     }
 
-    return string(result.data()).replace(L" __cdecl", L"");
+    return string(result.data(), result.size()).replace(" __cdecl", "");
 }
 
 }  // namespace ABI

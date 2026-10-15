@@ -41,9 +41,9 @@ inline string stringf(string fmt) {
 /// \return the formatted string
 // template <typename... Ty>
 // inline string stringf(string fmt, Ty &&...args) {
-//     const static string placeholder  = L"{}";
-//     const static string escape_open  = L"\\{";
-//     const static string escape_close = L"\\}";
+//     const static string placeholder  = "{}";
+//     const static string escape_open  = "\\{";
+//     const static string escape_close = "\\}";
 
 //     // logic to use
 //     // 1. find the first placeholder in the string
@@ -60,7 +60,7 @@ inline string stringf(string fmt) {
 
 //         usize new_pos = fmt.raw_string().find(placeholder.raw(), search_pos, placeholder.length());
 //         if (new_pos == string::string_t::npos) {
-//             _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError(L"[f-string rt]: too few arguments for format string"));
+//             _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError("[f-string rt]: too few arguments for format string"));
 //         }
 
 //         fmt.replace(new_pos, placeholder.length(), arg);
@@ -105,9 +105,9 @@ inline string stringf(string fmt) {
 
 template <typename... Ty>
 inline string stringf(string fmt, Ty &&...args) {
-    const static string placeholder  = L"{}";
-    const static string escape_open  = L"\\{";
-    const static string escape_close = L"\\}";
+    const static string placeholder  = "{}";
+    const static string escape_open  = "\\{";
+    const static string escape_close = "\\}";
 
     string result;
     result.raw_string().reserve(fmt.size() + (sizeof...(args) * 8));
@@ -117,13 +117,13 @@ inline string stringf(string fmt, Ty &&...args) {
     const string args_arr[] = {to_string(std::Memory::forward<Ty>(args))...};
 
     for (size_t i = 0; i < fmt.size();) {
-        if (i + 1 < fmt.size() && fmt[i] == L'\\' && (fmt[i + 1] == L'{' || fmt[i + 1] == L'}')) {
+        if (i + 1 < fmt.size() && fmt[i] == '\\' && (fmt[i + 1] == '{' || fmt[i + 1] == '}')) {
             result.push_back(fmt[i + 1]);
             i += 2;
             ++pos;
-        } else if (i + 1 < fmt.size() && fmt[i] == L'{' && fmt[i + 1] == L'}') {
+        } else if (i + 1 < fmt.size() && fmt[i] == '{' && fmt[i + 1] == '}') {
             if (index >= sizeof...(args)) {
-                _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError(L"[f-string rt]: too few format specifiers (\"{}\")"));
+                _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError("[f-string rt]: too few format specifiers (\"{}\")"));
             }
             result.append(args_arr[index++]);
             pos += args_arr[index - 1].size();
@@ -137,7 +137,7 @@ inline string stringf(string fmt, Ty &&...args) {
     }
 
     if (index < sizeof...(args)) {
-        _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError(L"[f-string rt]: too many format specifiers (\"{}\")"));
+        _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(Error::RuntimeError("[f-string rt]: too many format specifiers (\"{}\")"));
     }
 
     return result;

@@ -23,36 +23,33 @@
 
 H_NAMESPACE_BEGIN
 
+// `string` holds UTF-8 bytes and print writes them verbatim, so no locale is
+// involved; only the Windows console needs telling that the bytes are UTF-8.
 inline void enable_utf8_output() {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
-    libcxx::setlocale(LC_ALL, ".UTF-8");
-#else
-    if (!libcxx::setlocale(LC_ALL, "en_US.UTF-8"))
-        libcxx::setlocale(LC_ALL, "C.UTF-8");
 #endif
 }
 
 template <typename... Args>
 void print(Args &&...t) {
     if constexpr (sizeof...(t) == 0) {
-        wprintf(L"\n");
+        libcxx::fputc('\n', stdout);
         return;
     }
 
-    ((wprintf(L"%ls",
-              [&]() -> const string {
-                  auto str = std::to_string(t);
-                  return str;
-              }()
-                           .raw())),
-     ...);
+    (
+        [&] {
+            const string str = std::to_string(t);
+            libcxx::fwrite(str.raw(), 1, str.size(), stdout);
+        }(),
+        ...);
 
     if constexpr (sizeof...(t) > 0) {
         using LastArg = libcxx::tuple_element_t<sizeof...(t) - 1, tuple<Args...>>;
         if constexpr (!std::Meta::same_as<std::Meta::const_volatile_removed<LastArg>, std::endl>) {
-            wprintf(L"\n");
+            libcxx::fputc('\n', stdout);
         }
     }
 }

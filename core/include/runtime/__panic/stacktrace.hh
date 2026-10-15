@@ -52,40 +52,47 @@ enum class FrameKind : uint8_t {
     Native = 2,
 };
 struct Location {
-    const wchar_t *file;
-    const wchar_t *func;
-    uint32_t       line;
+    const char *file;
+    const char *func;
+    uint32_t    line;
 
-    wchar_t file_buf[1024];
-    wchar_t func_buf[1024];
+    char file_buf[1024];
+    char func_buf[1024];
 
-    static void char_to_wchar(const char *src, wchar_t *dst, size_t dst_cap) {
-        if (!src || !dst || dst_cap == 0) {
+    // Bytes are copied as-is: paths and symbol names are already UTF-8 (or
+    // whatever the OS handed us), and `string` is a byte string.
+    static void copy_cstr(const char *src, char *dst, size_t dst_cap) {
+        if (!dst || dst_cap == 0) {
             return;
         }
 
-        size_t converted = mbstowcs(dst, src, dst_cap - 1);
-        if (converted == (size_t)-1) {
-            dst[0] = L'\0';
-        } else {
-            dst[converted] = L'\0';
+        if (!src) {
+            dst[0] = '\0';
+            return;
         }
+
+        size_t n = 0;
+        while (n + 1 < dst_cap && src[n] != '\0') {
+            dst[n] = src[n];
+            ++n;
+        }
+        dst[n] = '\0';
     }
 
     Location(const char *f, const char *fn, uint32_t l)
         : file(file_buf)
         , func(func_buf)
         , line(l) {
-        char_to_wchar(f, file_buf, sizeof(file_buf) / sizeof(wchar_t));
-        char_to_wchar(fn, func_buf, sizeof(func_buf) / sizeof(wchar_t));
+        copy_cstr(f, file_buf, sizeof(file_buf));
+        copy_cstr(fn, func_buf, sizeof(func_buf));
     }
 
     Location()
-        : file(L"")
-        , func(L"")
+        : file("")
+        , func("")
         , line(0) {
-        file_buf[0] = L'\0';
-        func_buf[0] = L'\0';
+        file_buf[0] = '\0';
+        func_buf[0] = '\0';
     }
 };
 
@@ -209,8 +216,8 @@ inline FrameSummary *capture(int max_depth) {
 struct CaptureBuffers {
     FrameSummary nodes[MAX_STACK_FRAME_DEPTH];
     Location     native_locs[MAX_STACK_FRAME_DEPTH];
-    wchar_t      fn_bufs[MAX_STACK_FRAME_DEPTH][1024];
-    wchar_t      file_bufs[MAX_STACK_FRAME_DEPTH][1024];
+    char         fn_bufs[MAX_STACK_FRAME_DEPTH][1024];
+    char         file_bufs[MAX_STACK_FRAME_DEPTH][1024];
 };
 
 struct CaptureBuffersOwner {
@@ -238,20 +245,6 @@ inline FrameSummary *capture(int max_depth) {
         }
 
         return v;
-    };
-
-    auto copy_wstr = [](wchar_t *dst, size_t cap, const char *src) {
-        if (!dst || cap == 0) {
-            return;
-        }
-
-        if (!src) {
-            dst[0] = L'\0';
-            return;
-        }
-
-        mbstowcs(dst, src, cap - 1);
-        dst[cap - 1] = L'\0';
     };
 
     const int limit = clamp_limit(max_depth);
@@ -292,11 +285,14 @@ inline FrameSummary *capture(int max_depth) {
         const char *file = "???";
         uint32_t    line = 0;
 
+        // `fn` may point into `demangled`, so it is freed only after the copy
+        // into `s_fn_bufs` below.
+        char   *demangled = nullptr;
         Dl_info info{};
         if (dladdr(stack[i], &info)) {
             if (info.dli_sname && info.dli_sname[0] != '\0') {
-                int   status    = 0;
-                char *demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
+                int status = 0;
+                demangled  = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
 
                 if (status == 0 && demangled) {
                     fn = demangled;
@@ -305,10 +301,9 @@ inline FrameSummary *capture(int max_depth) {
                 }
 
                 if (fn == nullptr || fn[0] == '\0') {
+                    ::free(demangled);
                     continue;
                 }
-
-                ::free(demangled);
             }
             if (info.dli_fname && info.dli_fname[0] != '\0') {
                 file = info.dli_fname;
@@ -326,13 +321,8 @@ inline FrameSummary *capture(int max_depth) {
             }
 
             if (end > p) {
-                thread_local wchar_t tmp_path[1024];
-                size_t               len = static_cast<size_t>(end - p);
-                if (len >= (sizeof(tmp_path) / sizeof(wchar_t))) {
-                    len = (sizeof(tmp_path) / sizeof(wchar_t)) - 1;
-                }
-
-                char narrow_buf[1024];
+                size_t len = static_cast<size_t>(end - p);
+                char   narrow_buf[1024];
 
                 if (len >= sizeof(narrow_buf)) {
                     len = sizeof(narrow_buf) - 1;
@@ -344,19 +334,18 @@ inline FrameSummary *capture(int max_depth) {
 
                 narrow_buf[len] = '\0';
 
-                mbstowcs(tmp_path, narrow_buf, sizeof(tmp_path) / sizeof(wchar_t));
-                tmp_path[(sizeof(tmp_path) / sizeof(wchar_t)) - 1] = L'\0';
-                file                                               = narrow_buf;
-
-                copy_wstr(
-                    s_file_bufs[native_i], sizeof(s_file_bufs[0]) / sizeof(wchar_t), narrow_buf);
+                Location::copy_cstr(narrow_buf, s_file_bufs[native_i], sizeof(s_file_bufs[0]));
+                file = s_file_bufs[native_i];
             }
         }
 
-        copy_wstr(s_fn_bufs[native_i], sizeof(s_fn_bufs[0]) / sizeof(wchar_t), fn);
-        copy_wstr(s_file_bufs[native_i], sizeof(s_file_bufs[0]) / sizeof(wchar_t), file);
+        Location::copy_cstr(fn, s_fn_bufs[native_i], sizeof(s_fn_bufs[0]));
+        if (file != s_file_bufs[native_i]) {
+            Location::copy_cstr(file, s_file_bufs[native_i], sizeof(s_file_bufs[0]));
+        }
+        ::free(demangled);
 
-        if (s_fn_bufs[native_i] == nullptr || s_fn_bufs[native_i][0] == L'\0') {
+        if (s_fn_bufs[native_i][0] == '\0') {
             // skip empty function names
             --native_i;
             continue;
@@ -388,22 +377,22 @@ inline void backtrace(const FrameSummary *cur = capture()) {
         if (cur->loc != nullptr) {
             if (cur->loc->file && cur->loc->func && cur->loc->line != 0) {
                 std::print(std::stringf(
-                    L"\x1b[31m{}\x1b[0m (\x1b[33m{}:{})",
+                    "\x1b[31m{}\x1b[0m (\x1b[33m{}:{})",
                     std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(cur->loc->func)),
                     cur->loc->file,
                     cur->loc->line));
             } else if (cur->loc->file && cur->loc->func) {
                 std::print(std::stringf(
-                    L"\x1b[31m{}\x1b[0m (\x1b[33m{}\x1b[0m)",
+                    "\x1b[31m{}\x1b[0m (\x1b[33m{}\x1b[0m)",
                     std::ABI::strip_kairo_prefix(std::ABI::demangle_partial(cur->loc->func)),
                     cur->loc->file));
             } else if (cur->loc->func) {
-                std::print(std::stringf(L"\x1b[31m{}\x1b[0m", cur->loc->func));
+                std::print(std::stringf("\x1b[31m{}\x1b[0m", cur->loc->func));
             } else {
-                std::print(L"<unknown>");
+                std::print("<unknown>");
             }
         } else {
-            std::print(L"<unknown>");
+            std::print("<unknown>");
         }
 
         cur = cur->prev;

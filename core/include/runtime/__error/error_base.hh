@@ -33,7 +33,7 @@ class BaseError /* with Panicking */ {
 
     virtual ~BaseError() = default;
 
-    [[nodiscard]] virtual inline auto operator$panic() const -> string { return L"An error occurred."; }
+    [[nodiscard]] virtual inline auto operator$panic() const -> string { return "An error occurred."; }
     [[nodiscard]] virtual inline auto operator$cast(string * /*unused*/) const -> string = 0;  // string cast
 };
 };  // namespace Error

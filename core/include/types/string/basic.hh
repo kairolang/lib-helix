@@ -64,20 +64,42 @@ class basic {
     constexpr basic(const slice_t &s) noexcept
         : data(s.raw(), s.size()) {}
 
-    template <typename U = CharT>
-    basic(const char *str,
-          typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> * = nullptr) noexcept;
+    // Narrow `char` input is reinterpreted byte-for-byte, never decoded:
+    // `string` is a byte string and the bytes of a literal are already UTF-8.
+    // The array form keeps embedded NULs; it is a better match than the
+    // pointer template for a literal, so `"a\0b"` has size 3.
+    template <usize N, typename U = CharT>
+        requires(!libcxx::is_same_v<U, char>)
+    basic(const char (&s)[N]) noexcept
+        : data(reinterpret_cast<const CharT *>(s), N - 1) {}
+
+    template <typename P, typename U = CharT>
+        requires(!libcxx::is_same_v<U, char>) &&
+                (libcxx::is_same_v<P, const char *> || libcxx::is_same_v<P, char *>)
+    basic(P str) noexcept {
+        if (str) {
+            data.assign(reinterpret_cast<const CharT *>(str), libcxx::char_traits<char>::length(str));
+        }
+    }
 
     template <typename U = CharT>
-    basic(const char *str,
-          usize       size,
-          typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> * = nullptr) noexcept;
+        requires(!libcxx::is_same_v<U, char>)
+    basic(const char *str, usize size) noexcept {
+        if (str && size != 0) {
+            data.assign(reinterpret_cast<const CharT *>(str), size);
+        }
+    }
 
     // Assignment
     basic &operator=(const basic &other) noexcept = default;
     basic &operator=(basic &&other) noexcept;
     basic &operator=(const CharT *str) noexcept;
     basic &operator=(const slice_t &s) noexcept;
+    basic &operator=(const char *str) noexcept
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return *this = basic(str);
+    }
     basic &operator=(const string_t &str) noexcept {
         data = str;
         return *this;
@@ -98,7 +120,7 @@ class basic {
     void replace(size_t pos, size_t len, const slice_t &other) noexcept {
         data.replace(static_cast<size_t>(pos),
                      static_cast<size_t>(len),
-                     libcxx::basic_string_view<CharT>(other));
+                     libcxx::basic_string_view<CharT, Traits>(other));
     }
 
     basic &replace(const basic &old_str, const basic &new_str, size_t count = npos) noexcept {
@@ -140,6 +162,12 @@ class basic {
         return replace(basic(old_str), basic(new_str), count);
     }
 
+    basic &replace(const char *old_str, const char *new_str, size_t count = npos) noexcept
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return replace(basic(old_str), basic(new_str), count);
+    }
+
     basic &replace(CharT old_char, CharT new_char, size_t count = npos) noexcept {
         size_t replacements = 0;
 
@@ -164,6 +192,11 @@ class basic {
     basic &operator+=(const basic &other) noexcept;
     basic &operator+=(const CharT *str) noexcept;
     basic &operator+=(const slice_t &s) noexcept;
+    basic &operator+=(const char *str) noexcept
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return *this += basic(str);
+    }
 
     template <typename U = CharT>
         requires std::Meta::is_convertible_to<U, CharT>
@@ -172,6 +205,11 @@ class basic {
     basic operator+(const basic &other) const;
     basic operator+(const CharT *str) const;
     basic operator+(const slice_t &s) const;
+    basic operator+(const char *str) const
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return *this + basic(str);
+    }
 
     // implicit conversion to string_t
     operator string_t() const noexcept { return data; }
@@ -190,6 +228,8 @@ class basic {
 
     // Basic Access
     const CharT    *raw() const noexcept { return data.c_str(); }
+    const char     *c_str() const noexcept { return reinterpret_cast<const char *>(data.c_str()); }
+    libcxx::string_view view() const noexcept { return {c_str(), data.size()}; }
     size_t          size() const noexcept { return data.size(); }
     size_t          length() const noexcept { return data.length(); }
     bool            is_empty() const noexcept { return data.empty(); }
@@ -214,11 +254,25 @@ class basic {
     // Search
     bool starts_with(const basic &needle) const noexcept { return data.starts_with(needle.data); }
     bool starts_with(CharT c) const noexcept { return data.starts_with(c); }
-    bool starts_with(slice needle) const noexcept { return data.starts_with(needle.raw()); }
+    bool starts_with(slice needle) const noexcept {
+        return data.starts_with(libcxx::basic_string_view<CharT, Traits>(needle));
+    }
+    bool starts_with(const char *needle) const noexcept
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return starts_with(basic(needle));
+    }
 
     bool ends_with(const basic &needle) const noexcept { return data.ends_with(needle.data); }
     bool ends_with(CharT c) const noexcept { return data.ends_with(c); }
-    bool ends_with(slice needle) const noexcept { return data.ends_with(needle.raw()); }
+    bool ends_with(slice needle) const noexcept {
+        return data.ends_with(libcxx::basic_string_view<CharT, Traits>(needle));
+    }
+    bool ends_with(const char *needle) const noexcept
+        requires(!libcxx::is_same_v<CharT, char>)
+    {
+        return ends_with(basic(needle));
+    }
 
     bool contains(const basic &needle) const noexcept { return data.find(needle.data) != npos; }
     bool contains(CharT c) const noexcept { return data.find(c) != npos; }
@@ -266,8 +320,8 @@ class basic {
 
 H_STD_NAMESPACE_END
 
-using nstring  = std::String::basic<char>;
-using string   = std::String::basic<wchar_t>;
+using string   = std::String::basic<unsigned char>;
+using nstring  = string;
 using string32 = std::String::basic<char32_t>;
 
 H_NAMESPACE_END
@@ -276,28 +330,16 @@ namespace std {
 template <>
 struct hash<kairo::string> {
     size_t operator()(const kairo::string &s) const noexcept {
-        return std::hash<std::wstring>{}(std::wstring(s.raw(), s.size()));
-    }
-};
-
-template <>
-struct hash<kairo::nstring> {
-    size_t operator()(const kairo::nstring &s) const noexcept {
-        return std::hash<std::string>{}(std::string(s.raw(), s.size()));
+        return std::hash<std::string_view>{}(
+            std::string_view(reinterpret_cast<const char *>(s.raw()), s.size()));
     }
 };
 
 template <>
 struct hash<kairo::string::slice> {
     size_t operator()(const kairo::string::slice &s) const noexcept {
-        return std::hash<std::wstring>{}(std::wstring(s.raw(), s.size()));
-    }
-};
-
-template <>
-struct hash<kairo::nstring::slice> {
-    size_t operator()(const kairo::nstring::slice &s) const noexcept {
-        return std::hash<std::string>{}(std::string(s.raw(), s.size()));
+        return std::hash<std::string_view>{}(
+            std::string_view(reinterpret_cast<const char *>(s.raw()), s.size()));
     }
 };
 }  // namespace std

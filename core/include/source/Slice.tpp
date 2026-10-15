@@ -22,82 +22,48 @@
 H_NAMESPACE_BEGIN
 H_STD_NAMESPACE_BEGIN
 
-namespace String::__internal {
-namespace {
-    constexpr static usize log2_sizeof_wchar_t = static_cast<usize>(sizeof(wchar_t) > 1) +
-                                                 static_cast<usize>(sizeof(wchar_t) > 2) +
-                                                 static_cast<usize>(sizeof(wchar_t) > 4);
-}
-}  // namespace String::__internal
-
 namespace String {
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 slice<CharT, Traits>::slice(const CharT *str) noexcept
-    : len(str ? Traits::length(str) : 0)
-    , data(str, len) {}
+    : data(str, str ? Traits::length(str) : 0) {}
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 slice<CharT, Traits>::slice(const CharT *str, size_t size) noexcept
-    : len(size)
-    , data(str, len) {}
+    : data(str, size) {}
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 slice<CharT, Traits>::slice(view_t view) noexcept
-    : len(view.size())
-    , data(view) {}
+    : data(view) {}
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 slice<CharT, Traits>::slice(char_vec &vec) noexcept
-    : len(vec.size())
-    , data(vec.data(), len) {}
+    : data(vec.data(), vec.size()) {}
 
-template <typename CharT, typename Traits>
-    requires CharTraits<Traits, CharT>
-slice<CharT, Traits>::slice(char_vec &&vec) noexcept
-    : len(vec.size())
-    , data(std::Memory::move(vec).data(), len) {}
-
-/// NOTE: The code bellow needs to be reviewed to ensure that it is correct and safe.
-/// I'm not sure if i should be using CharT or wchar_t here.
-/// if further testing shows that this is not correct, need to change it to use CharT.
+/// Narrow `char` input is reinterpreted byte-for-byte, never widened: the
+/// slice views the caller's bytes directly, so it borrows `str` like every
+/// other slice constructor.
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 template <typename U>
 slice<CharT, Traits>::slice(const char *str,
-                            typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> *) noexcept {
-    usize    size = LIBCXX_NAMESPACE::char_traits<char>::length(str);
-    wchar_t *buff =
-        static_cast<wchar_t *>(alloca((size + 1) << String::__internal::log2_sizeof_wchar_t));
-
-    try {
-        for (usize i = 0; i < size; ++i) {
-            buff[i] = static_cast<wchar_t>(static_cast<unsigned char>(str[i]));
-        }
-        this->replace(buff, size);
-    } catch (...) { this->replace((wchar_t *)nullptr, 1_usize); }
+                            typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> *) noexcept
+    : data(reinterpret_cast<const CharT *>(str),
+           str ? LIBCXX_NAMESPACE::char_traits<char>::length(str) : 0) {
+    static_assert(sizeof(CharT) == 1, "reinterpreting char input needs a byte-sized CharT");
 }
 
-/// Same as above, also needs to be reviewed.
-/// NOTE: The code bellow needs to be reviewed to ensure that it is correct and safe.
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 template <typename U>
 slice<CharT, Traits>::slice(const char *str,
                             usize       size,
-                            typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> *) noexcept {
-    wchar_t *buff =
-        static_cast<wchar_t *>(alloca((size) << String::__internal::log2_sizeof_wchar_t));
-
-    try {
-        for (usize i = 0; i < size; ++i) {
-            buff[i] = static_cast<wchar_t>(static_cast<unsigned char>(str[i]));
-        }
-        this->replace(buff, size);
-    } catch (...) { this->replace((wchar_t *)nullptr, 1_usize); }
+                            typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> *) noexcept
+    : data(reinterpret_cast<const CharT *>(str), str ? size : 0) {
+    static_assert(sizeof(CharT) == 1, "reinterpreting char input needs a byte-sized CharT");
 }
 
 template <typename CharT, typename Traits>
@@ -106,23 +72,18 @@ void slice<CharT, Traits>::exchange(slice &other) noexcept {
     view_t tmp     = this->data;
     this->data     = other.data;
     other.data     = tmp;
-    size_t tmp_len = this->len;
-    this->len   = other.len;
-    other.len   = tmp_len;
 }
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 void slice<CharT, Traits>::replace(slice &other) noexcept {
-    this->data   = other.data;
-    this->len = other.len;
+    this->data = other.data;
 }
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 void slice<CharT, Traits>::replace(CharT *str, usize size) noexcept {
-    this->data   = view_t(str, size);
-    this->len = size;
+    this->data = view_t(str, size);
 }
 
 template <typename CharT, typename Traits>
@@ -133,9 +94,9 @@ slice<CharT, Traits> slice<CharT, Traits>::subslice(usize pos, usize leng) const
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
-slice<CharT, Traits> slice<CharT, Traits>::l_strip(char_vec &delim) const {
+slice<CharT, Traits> slice<CharT, Traits>::l_strip(const char_vec &delim) const {
     usize start = 0;
-    usize end   = len;
+    usize end   = data.size();
     while (start < end &&
            libcxx::find(delim.begin(), delim.end(), this->operator[](start)) != delim.end()) {
         ++start;
@@ -145,9 +106,9 @@ slice<CharT, Traits> slice<CharT, Traits>::l_strip(char_vec &delim) const {
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
-slice<CharT, Traits> slice<CharT, Traits>::r_strip(char_vec &delim) const {
+slice<CharT, Traits> slice<CharT, Traits>::r_strip(const char_vec &delim) const {
     usize start = 0;
-    usize end   = len;
+    usize end   = data.size();
     while (end > start &&
            libcxx::find(delim.begin(), delim.end(), this->operator[](end - 1)) != delim.end()) {
         --end;
@@ -157,20 +118,20 @@ slice<CharT, Traits> slice<CharT, Traits>::r_strip(char_vec &delim) const {
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
-slice<CharT, Traits> slice<CharT, Traits>::strip(char_vec &delim) const {
+slice<CharT, Traits> slice<CharT, Traits>::strip(const char_vec &delim) const {
     return l_strip(delim).r_strip(delim);
 }
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 bool slice<CharT, Traits>::starts_with(slice &needle) const {
-    return len >= needle.size() && subslice(0, needle.size()) == needle;
+    return data.size() >= needle.size() && subslice(0, needle.size()) == needle;
 }
 
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 bool slice<CharT, Traits>::ends_with(slice &needle) const {
-    return len >= needle.size() && subslice(len - needle.size(), needle.size()) == needle;
+    return data.size() >= needle.size() && subslice(data.size() - needle.size(), needle.size()) == needle;
 }
 
 template <typename CharT, typename Traits>
@@ -188,7 +149,13 @@ bool slice<CharT, Traits>::contains(CharT &chr) const {
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 isize slice<CharT, Traits>::compare(slice &other) const noexcept {
-    return Traits::compare(data.data(), other.data.data(), len);
+    // Compare only the common prefix; the old form read `size()` elements
+    // from `other` even when it was shorter.
+    auto n = libcxx::min(data.size(), other.data.size());
+    if (auto r = Traits::compare(data.data(), other.data.data(), n); r != 0) {
+        return r;
+    }
+    return data.size() < other.data.size() ? -1 : (data.size() > other.data.size() ? 1 : 0);
 }
 
 template <typename CharT, typename Traits>
@@ -198,7 +165,7 @@ slice<CharT, Traits>::slice_vec slice<CharT, Traits>::split_lines() const {
     bool      encoding_CR = false;
     usize     start       = 0;
     usize     end         = 0;
-    while (end < len) {
+    while (end < data.size()) {
         if (this->operator[](end) == '\r') {
             encoding_CR = true;
         } else if (this->operator[](end) == '\n') {
@@ -224,7 +191,7 @@ slice<CharT, Traits>::slice_vec slice<CharT, Traits>::split(slice &delim, Operat
     slice_vec result;
     usize     start = 0;
     usize     end   = 0;
-    while (end < len) {
+    while (end < data.size()) {
         if (subslice(end, delim.size()) == delim) {
             if (op == Operation::Keep) {
                 result.push_back(subslice(start, end - start));
@@ -292,8 +259,7 @@ CharT slice<CharT, Traits>::operator[](usize index) const noexcept {
     return data[static_cast<usize>(index)];
 }
 
-template class slice<char>;
-template class slice<wchar_t>;
+template class slice<unsigned char>;
 }  // namespace String
 
 H_STD_NAMESPACE_END

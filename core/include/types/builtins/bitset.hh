@@ -320,33 +320,6 @@ struct __BitSet<T> {
         return buf;
     }
 
-    // Conversion to a wide C-string.
-    [[nodiscard]] KAIRO_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
-        static thread_local wchar_t buf[digits + 1];
-        __BitSet                    copy = *this;
-        int                         pos  = 0;
-        __BitSet                    zero(0);
-        __BitSet                    ten(10);
-        if (copy == zero) {
-            buf[0] = L'0';
-            buf[1] = L'\0';
-            return buf;
-        }
-        while (copy > zero) {
-            __BitSet rem = copy % ten;
-            copy /= ten;
-            int digit  = static_cast<int>(rem.value);
-            buf[pos++] = L'0' + digit;
-        }
-        for (int i = 0; i < pos / 2; i++) {
-            wchar_t tmp      = buf[i];
-            buf[i]           = buf[pos - 1 - i];
-            buf[pos - 1 - i] = tmp;
-        }
-        buf[pos] = L'\0';
-        return buf;
-    }
-
     // Explicit conversion to bool.
     KAIRO_FORCE_INLINE constexpr explicit operator bool() const noexcept {
         return *this != __BitSet(0);
@@ -385,38 +358,6 @@ struct __BitSet<T> {
         return result;
     }
 
-    // ── Parsing from a Wide C-string ──
-    KAIRO_FORCE_INLINE static constexpr __BitSet from_cstr(const wchar_t *ptr,
-                                                           libcxx::size_t len) noexcept {
-        int            base  = 10;
-        libcxx::size_t start = 0;
-        if (len >= 2 && ptr[0] == L'0') {
-            if (ptr[1] == L'x' || ptr[1] == L'X') {
-                base  = 16;
-                start = 2;
-            } else if (ptr[1] == L'b' || ptr[1] == L'B') {
-                base  = 2;
-                start = 2;
-            } else {
-                base  = 8;
-                start = 1;
-            }
-        }
-        __BitSet result(0);
-        __BitSet base_val(base);
-        for (libcxx::size_t i = start; i < len; ++i) {
-            wchar_t c = ptr[i];
-            if (c == L'_') {
-                continue;
-            }
-            int digit = chr_to_i32(static_cast<char>(c), base);
-            if (digit < 0) {
-                break;
-            }
-            result = result * __BitSet(base) + __BitSet(digit);
-        }
-        return result;
-    }
 };
 
 // -----------------------------------------------------------------------------
@@ -779,33 +720,6 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return buf;
     }
 
-    // ── Conversion to C-string (wide) ──
-    [[nodiscard]] KAIRO_FORCE_INLINE const wchar_t *to_wcstr() const noexcept {
-        static thread_local wchar_t buf[digits + 1];
-        __BitSet                    copy = *this;
-        int                         pos  = 0;
-        __BitSet                    zero(0, __BitSet<Tail...>::min);
-        __BitSet                    ten(10, __BitSet<Tail...>::min);
-        if (copy == zero) {
-            buf[0] = L'0';
-            buf[1] = L'\0';
-            return buf;
-        }
-        while (copy > zero) {
-            __BitSet rem = copy % ten;
-            copy /= ten;
-            int digit  = static_cast<int>(rem);
-            buf[pos++] = L'0' + digit;
-        }
-        for (int i = 0; i < pos / 2; i++) {
-            wchar_t tmp      = buf[i];
-            buf[i]           = buf[pos - 1 - i];
-            buf[pos - 1 - i] = tmp;
-        }
-        buf[pos] = L'\0';
-        return buf;
-    }
-
     // ── Parsing from a Narrow C-string ──
     KAIRO_FORCE_INLINE static __BitSet from_cstr(const char *ptr, libcxx::size_t len) noexcept {
         int            base  = 10;
@@ -839,38 +753,6 @@ struct __BitSet<__BitSet<Head>, __BitSet<Tail>...> {
         return result;
     }
 
-    // ── Parsing from a Wide C-string ──
-    KAIRO_FORCE_INLINE static __BitSet from_cstr(const wchar_t *ptr, libcxx::size_t len) noexcept {
-        int            base  = 10;
-        libcxx::size_t start = 0;
-        if (len >= 2 && ptr[0] == L'0') {
-            if (ptr[1] == L'x' || ptr[1] == L'X') {
-                base  = 16;
-                start = 2;
-            } else if (ptr[1] == L'b' || ptr[1] == L'B') {
-                base  = 2;
-                start = 2;
-            } else {
-                base  = 8;
-                start = 1;
-            }
-        }
-        __BitSet result(0, __BitSet<Tail...>::min);
-        __BitSet base_val(base, __BitSet<Tail...>::min);
-        for (libcxx::size_t i = start; i < len; ++i) {
-            wchar_t c = ptr[i];
-            if (c == L'_') {
-                continue;
-            }
-            int digit = chr_to_i32(static_cast<char>(c), base);
-            if (digit < 0) {
-                break;
-            }
-            result = result * __BitSet(base, __BitSet<Tail...>::min) +
-                     __BitSet(digit, __BitSet<Tail...>::min);
-        }
-        return result;
-    }
 };
 
 template class __BitSet<signed char>;
@@ -898,8 +780,8 @@ KAIRO_FORCE_INLINE constexpr __BitSet<T> operator+(const __BitSet<T> &lhs, U rhs
                      (__NumData<T>::is_signed ? ((lhs > 0 && rhs > __NumData<T>::max - lhs) ||
                                                  (lhs < 0 && rhs < __NumData<T>::min - lhs))
                                               : (rhs > __NumData<T>::max - lhs)),
-                 L"Addition out of bounds",
-                 L"warning")) {
+                 "Addition out of bounds",
+                 "warning")) {
     return lhs + __BitSet<T>(static_cast<T>(rhs));
 }
 

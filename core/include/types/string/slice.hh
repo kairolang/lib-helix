@@ -24,12 +24,11 @@ H_STD_NAMESPACE_BEGIN
 
 namespace String {
 
-template <typename CharT, typename Traits = libcxx::char_traits<CharT>>
+template <typename CharT, typename Traits = String::default_traits_t<CharT>>
     requires CharTraits<Traits, CharT>
 class slice {
-    using view_t = libcxx::basic_string_view<CharT>;
+    using view_t = libcxx::basic_string_view<CharT, Traits>;
 
-    usize  len;
     view_t data{};
 
   public:
@@ -37,7 +36,7 @@ class slice {
 
     using char_traits = Traits;
     using char_t      = CharT;
-    using slice_t     = slice<CharT>;
+    using slice_t     = slice<CharT, Traits>;
     using size_t      = usize;
     using slice_vec   = vec<slice_t>;
     using char_vec    = vec<CharT>;
@@ -55,7 +54,6 @@ class slice {
     slice(const CharT *str, size_t size) noexcept;
     slice(view_t view) noexcept;
     slice(char_vec &vec) noexcept;
-    slice(char_vec &&vec) noexcept;
 
     template <typename U = CharT>
     slice(const char *str,
@@ -80,17 +78,17 @@ class slice {
     [[nodiscard("is_empty() indicates whether the slice has no data, crucial for control flow; "
                 "discarding it may lead to incorrect assumptions")]]
     constexpr bool is_empty() const noexcept {
-        return len == 0;
+        return data.empty();
     }
     [[nodiscard("subslice() creates a view into a portion of the slice, vital for safe substring "
                 "operations; ignoring it wastes the result")]]
     slice subslice(usize pos, usize len) const noexcept;
 
-    slice l_strip(char_vec &delim = {' ', '\t', '\n', '\r'}) const;
-    slice r_strip(char_vec &delim = {' ', '\t', '\n', '\r'}) const;
-    slice strip(char_vec &delim = {' ', '\t', '\n', '\r'}) const;
+    slice l_strip(const char_vec &delim = {' ', '\t', '\n', '\r'}) const;
+    slice r_strip(const char_vec &delim = {' ', '\t', '\n', '\r'}) const;
+    slice strip(const char_vec &delim = {' ', '\t', '\n', '\r'}) const;
 
-    usize length() const noexcept { return len; }
+    usize length() const noexcept { return data.size(); }
 
     bool starts_with(slice &needle) const;
     bool ends_with(slice &needle) const;
@@ -135,16 +133,10 @@ H_NAMESPACE_END
 // make hash able
 namespace std {
 template <>
-struct hash<kairo::std::String::slice<wchar_t>> {
-    size_t operator()(const kairo::std::String::slice<wchar_t> &s) const noexcept {
-        return std::hash<std::wstring>{}(std::wstring(s.raw(), s.size()));
-    }
-};
-
-template <>
-struct hash<kairo::std::String::slice<char>> {
-    size_t operator()(const kairo::std::String::slice<char> &s) const noexcept {
-        return std::hash<std::string>{}(std::string(s.raw(), s.size()));
+struct hash<kairo::std::String::slice<unsigned char>> {
+    size_t operator()(const kairo::std::String::slice<unsigned char> &s) const noexcept {
+        return std::hash<std::string_view>{}(
+            std::string_view(reinterpret_cast<const char *>(s.raw()), s.size()));
     }
 };
 }  // namespace std

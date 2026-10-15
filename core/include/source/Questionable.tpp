@@ -190,7 +190,7 @@ bool $question<T>::operator==(const E &) const noexcept {
     if constexpr (false) {
 #endif
         _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(
-            std::Error::TypeMismatchError(L"Invalid: error type does not match any panic state."));
+            std::Error::TypeMismatchError("Invalid: error type does not match any panic state."));
 
 #ifdef _MSC_VER
     }
@@ -226,7 +226,7 @@ E $question<T>::operator$cast(E * /*unused*/) const {
                 return *reinterpret_cast<E *>(obj);
             }
             _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError(
-                string(L"Invalid Decay: error context object is null.")));
+                string("Invalid Decay: error context object is null.")));
         }
         data.error.operator$panic();
     }
@@ -237,10 +237,10 @@ E $question<T>::operator$cast(E * /*unused*/) const {
         }
 
         _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::TypeMismatchError(
-            L"Invalid cast: value type does not match requested type."));
+            "Invalid cast: value type does not match requested type."));
     }
 
-    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError(L"Invalid Decay: value is null."));
+    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError("Invalid Decay: value is null."));
 }
 
 template <class T>
@@ -253,7 +253,7 @@ T $question<T>::operator$cast(T * /*unused*/) const {
         data.error.operator$panic();
     }
 
-    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError(L"Invalid Decay: value is null."));
+    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError("Invalid Decay: value is null."));
 }
 
 ///
@@ -285,7 +285,7 @@ template <class T>
         data.error.operator$panic();
     }
 
-    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError(L"Invalid Decay: value is null."));
+    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError("Invalid Decay: value is null."));
 }
 
 ///
@@ -319,7 +319,7 @@ template <class T>
         data.error.operator$panic();
     }
 
-    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError(L"Invalid Decay: value is null."));
+    _HX_MC_Q7_INTERNAL_CRASH_PANIC_M(std::Error::NullValueError("Invalid Decay: value is null."));
 }
 
 H_NAMESPACE_END

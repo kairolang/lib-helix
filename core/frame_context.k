@@ -55,12 +55,12 @@ const fn std::Panic::FrameContext::type_name() -> string {
         // __cxa_demangle returns a malloc-allocated string
         var demangle: unsafe *std::Legacy::char = __cxxabiv1::__cxa_demangle(mangled_name, (&null), (&null), (&status));
         if status == 0 && (demangle != (&null)) {
-            var result: string = nstring_to_string(demangle);
+            var result: string = string(demangle);
         
             free(demangle);
             return result;
         }
         
-        return nstring_to_string(mangled_name);
+        return string(mangled_name);
     }
 }

@@ -22,14 +22,6 @@
 H_NAMESPACE_BEGIN
 H_STD_NAMESPACE_BEGIN
 
-namespace String::__internal {
-namespace {
-    constexpr static usize log2_sizeof_wchar_t_2 = static_cast<usize>(sizeof(wchar_t) > 1) +
-                                                   static_cast<usize>(sizeof(wchar_t) > 2) +
-                                                   static_cast<usize>(sizeof(wchar_t) > 4);
-}
-}  // namespace String::__internal
-
 namespace String {
 /////////////////////////////// ASSIGNMENT //////////////////////////////////////
 
@@ -82,9 +74,12 @@ template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 template <typename U> requires std::Meta::is_convertible_to<U, CharT>
 inline basic<CharT, Traits> &basic<CharT, Traits>::operator+=(const U chr) noexcept {
-    static_assert(std::Meta::is_same_as<U, CharT>,
+    // Any byte-sized integral is accepted so a plain `'x'` (char) appends to
+    // a byte string (unsigned char); wider types are still rejected.
+    static_assert(std::Meta::is_same_as<U, CharT> ||
+                      (sizeof(U) == sizeof(CharT) && libcxx::is_integral_v<U>),
         "Error: Tried to add a string type to a non-char type.");
-    data += chr;
+    data += static_cast<CharT>(chr);
     return *this;
 }
 
@@ -118,41 +113,14 @@ template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 template <typename U> requires std::Meta::is_convertible_to<U, CharT>
 inline basic<CharT, Traits> basic<CharT, Traits>::operator+(const U chr) const {
-    static_assert(std::Meta::is_same_as<U, CharT>,
+    // Any byte-sized integral is accepted so a plain `'x'` (char) appends to
+    // a byte string (unsigned char); wider types are still rejected.
+    static_assert(std::Meta::is_same_as<U, CharT> ||
+                      (sizeof(U) == sizeof(CharT) && libcxx::is_integral_v<U>),
         "Error: Tried to add a string type to a non-char type.");
     basic result = *this;
     result += chr;
     return result;
-}
-
-////////////////////////////////////// CONSTRUCTORS //////////////////////////////////////
-
-template <typename CharT, typename Traits>
-    requires CharTraits<Traits, CharT>
-template <typename U>
-inline basic<CharT, Traits>::basic(
-    const char *str,
-    typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> * /* unused */) noexcept {
-    if (!str) {
-        data = L"";
-        return;
-    }
-    usize size = LIBCXX_NAMESPACE::char_traits<char>::length(str);
-    data       = nstring_to_string(nstring(str, size)).data;
-}
-
-template <typename CharT, typename Traits>
-    requires CharTraits<Traits, CharT>
-template <typename U>
-inline basic<CharT, Traits>::basic(
-    const char *str,
-    usize       size,
-    typename libcxx::enable_if_t<!libcxx::is_same_v<U, char>> * /* unused */) noexcept {
-    if (!str || size == 0) {
-        data = L"";
-        return;
-    }
-    data = nstring_to_string(nstring(str, size)).data;
 }
 
 //////////////////////////////////// SUBSTRING //////////////////////////////////////
@@ -160,7 +128,18 @@ inline basic<CharT, Traits>::basic(
 template <typename CharT, typename Traits>
     requires CharTraits<Traits, CharT>
 inline basic<CharT, Traits> basic<CharT, Traits>::subslice(size_t pos, size_t len) const noexcept {
-    return basic(data.substr(static_cast<size_t>(pos), static_cast<size_t>(len)).c_str());
+    // Bounded by the clamped length, not by `c_str()`'s NUL: a string with an
+    // embedded NUL byte used to be truncated at it. Otherwise this keeps
+    // `substr`'s contract exactly - clamp `len`, throw on a bad `pos` (which
+    // terminates, as before, since this is noexcept) - so a caller bug still
+    // surfaces instead of quietly yielding an empty string.
+    if (pos > data.size()) {
+        throw libcxx::out_of_range("basic::subslice: pos out of range");
+    }
+    if (len > data.size() - pos) {
+        len = data.size() - pos;
+    }
+    return basic(data.data() + pos, len);
 }
 
 template <typename CharT, typename Traits>
@@ -484,8 +463,7 @@ inline std::Questionable<usize> basic<CharT, Traits>::find_last_not_of(slice nee
     return null;
 }
 
-template class basic<char>;
-template class basic<wchar_t>;
+template class basic<unsigned char>;
 }  // namespace String
 
 H_STD_NAMESPACE_END

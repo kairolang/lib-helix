@@ -83,11 +83,11 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
     };
 
     fn detect_format(const path: *string) -> FileFormat {
-        if !libcxx::filesystem::exists(std::string_to_nstring(*path).raw()) {
+        if !libcxx::filesystem::exists((*path).c_str()) {
             return FileFormat::UNKNOWN;
         }
 
-        var f = libcxx::ifstream(std::string_to_nstring(*path).raw_string().data(), libcxx::ios::binary);
+        var f = libcxx::ifstream((*path).c_str(), libcxx::ios::binary);
         if !f {
             return FileFormat::UNKNOWN;
         }
@@ -284,7 +284,7 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
             var line_num:  usize  = usize(loc.line);
 
             var file_format: FileFormat = detect_format(&file_name);
-            var file_ext:    string     = libcxx::filesystem::path(std::string_to_nstring(file_name).raw()).extension().generic_wstring();
+            var file_ext:    string     = string(libcxx::filesystem::path(file_name.c_str()).extension().generic_string().c_str());
             var file_type:  string;
             switch (file_format) {
                 case FileFormat::ELF {
