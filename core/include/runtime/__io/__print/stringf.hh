@@ -110,7 +110,7 @@ inline string stringf(string fmt, Ty &&...args) {
     const static string escape_close = "\\}";
 
     string result;
-    result.raw_string().reserve(fmt.size() + (sizeof...(args) * 8));
+    result.reserve(fmt.size() + (sizeof...(args) * 8));
 
     usize index = 0;
     usize pos   = 0;

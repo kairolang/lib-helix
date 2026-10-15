@@ -301,7 +301,7 @@ inline fn HX_FN_Vi_Q5_32_kairo_default_panic_handler_Q3_5_5_stdPanicFrame_C_PK_R
                     (file_type = light_cyan + " (coff library)" + reset);
                 } case FileFormat::UNKNOWN {
                     if file_ext == ".exe" || file_ext == ".dll" || file_ext == ".lib" {
-                        (file_type = light_cyan + " (" + file_ext.raw_string().substr(1) + ")" + reset);
+                        (file_type = light_cyan + " (" + file_ext.subslice(1, file_ext.size()) + ")" + reset);
                     } else if file_ext == ".dylib" || file_ext == ".so" {
                         (file_type = light_cyan + " (shared object)" + reset);
                     } else if file_ext == ".a" {

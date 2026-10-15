@@ -245,7 +245,7 @@ inline string demangle_partial(const string &input) {
                     continue;
             }
 
-            usize end_pos = input.raw_string().find(string("_E$").raw_string(), i);
+            usize end_pos = input.view().find("_E$", i);
             if (end_pos == string::npos) {
                 output += input[i];
                 continue;

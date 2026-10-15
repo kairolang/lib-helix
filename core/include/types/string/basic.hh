@@ -241,8 +241,6 @@ class basic {
     size_t          size() const noexcept { return data.size(); }
     size_t          length() const noexcept { return data.length(); }
     bool            is_empty() const noexcept { return data.empty(); }
-    string_t       &raw_string() noexcept { return data; }
-    const string_t &raw_string() const noexcept { return data; }
 
     // Slice Conversion
     operator slice_t() const noexcept { return slice_t(data.data(), data.size()); }
@@ -329,7 +327,6 @@ class basic {
 H_STD_NAMESPACE_END
 
 using string   = std::String::basic<unsigned char>;
-using nstring  = string;
 using string32 = std::String::basic<char32_t>;
 
 H_NAMESPACE_END

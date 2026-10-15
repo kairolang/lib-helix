@@ -74,25 +74,6 @@ inline string to_string(Ty &&t) {
 
 using cstring = libcxx::string;
 
-// `string` is a byte string now, so every narrow/wide conversion below is the
-// identity (or a byte copy). They stay only so existing callers keep
-// compiling; the deprecation points each one at its removal.
-
-[[deprecated("narrow string: identity")]]
-inline string nstring_to_string(const nstring &s) { return s; }
-
-[[deprecated("narrow string: identity")]]
-inline nstring string_to_nstring(const string &s) { return s; }
-
-[[deprecated("narrow string: identity")]]
-inline string nptr_to_string(const char *p, size_t n) { return string(p, n); }
-
-[[deprecated("narrow string: identity")]]
-inline string cstring_to_string(const cstring &s) { return string(s.data(), s.size()); }
-
-[[deprecated("narrow string: identity")]]
-inline cstring string_to_cstring(const string &s) { return cstring(s.c_str(), s.size()); }
-
 H_STD_NAMESPACE_END
 H_NAMESPACE_END
 
