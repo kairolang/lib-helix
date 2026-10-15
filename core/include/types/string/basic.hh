@@ -82,6 +82,13 @@ class basic {
         }
     }
 
+    // std::string crossings are byte copies too; implicit so a std::string
+    // passes wherever a string is expected.
+    template <typename U = CharT>
+        requires(!libcxx::is_same_v<U, char>) && (sizeof(U) == 1)
+    basic(const libcxx::string &s) noexcept
+        : data(reinterpret_cast<const CharT *>(s.data()), s.size()) {}
+
     template <typename U = CharT>
         requires(!libcxx::is_same_v<U, char>)
     basic(const char *str, usize size) noexcept {
@@ -230,6 +237,7 @@ class basic {
     const CharT    *raw() const noexcept { return data.c_str(); }
     const char     *c_str() const noexcept { return reinterpret_cast<const char *>(data.c_str()); }
     libcxx::string_view view() const noexcept { return {c_str(), data.size()}; }
+    libcxx::string      std_string() const { return {c_str(), data.size()}; }
     size_t          size() const noexcept { return data.size(); }
     size_t          length() const noexcept { return data.length(); }
     bool            is_empty() const noexcept { return data.empty(); }
