@@ -151,7 +151,7 @@ template <typename CharT, typename Traits>
 isize slice<CharT, Traits>::compare(slice &other) const noexcept {
     // Compare only the common prefix; the old form read `size()` elements
     // from `other` even when it was shorter.
-    auto n = libcxx::min(data.size(), other.data.size());
+    auto n = (libcxx::min)(data.size(), other.data.size());
     if (auto r = Traits::compare(data.data(), other.data.data(), n); r != 0) {
         return r;
     }
